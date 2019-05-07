@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
     <head>
-        <meta charset="utf-8">
+        <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet"
         href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <style media="screen">
@@ -13,19 +13,19 @@
             #binaryOutput{
                 font-family: consolas, monospace;
                 text-align: right;
-                font-size: 20px;
+                font-size: 23px;
             }
 
             #octOutput{
                 font-family: consolas, monospace;
                 text-align: right;
-                font-size: 20px;
+                font-size: 23px;
             }
 
             #hexOutput{
-                font-family: consolas, monospace;
+                font-family: consolas , monospace;
                 text-align: right;
-                font-size: 20px;
+                font-size: 23px;
             }
 
             .container-fluid {
@@ -67,7 +67,7 @@
                                 <h4>Binary:</h4>
                                 <div class="form">
                                 </div>
-                                <div id="binaryOutput">
+                                <div id="binaryOutput">0
                                 </div>
                             </div>
                         </div>
@@ -75,7 +75,7 @@
                         <div class="card bg-primary mb-2">
                             <div class="card-body">
                                 <h4>Oct:</h4>
-                                <div id="octOutput">
+                                <div id="octOutput">0
                                 </div>
                             </div>
                         </div>
@@ -83,13 +83,13 @@
                         <div class="card bg-success mb-2">
                             <div class="card-body">
                                 <h4>Hex:</h4>
-                                <div id="hexOutput">
+                                <div id="hexOutput">0x0000 0000
                                 </div>
                             </div>
                         </div>
                         <div class="card bg-dark mb-2">
                             <div class="card-body">
-                                <h6 class="card-subtitle text-muted">Note: negative numbers are converted to 32 bit <a href="https://en.wikipedia.org/wiki/Two%27s_complement">Two's complement</a> notation</h6>
+                                <h6 class="card-subtitle text-muted">Note: negative numbers are converted to 32 bit <a href="https://en.wikipedia.org/wiki/Two%27s_complement">two's complement</a> notation</h6>
                             </div>
                         </div>
 
@@ -112,7 +112,7 @@
 
                 function decToHex(dec) {
                     const str = (dec >>> 0).toString(16).toUpperCase().padStart(8, "0");
-                    const toReturn = "0x " + str.slice(0, 4) + " " + str.slice(4, 8);
+                    const toReturn = "0x" + str.slice(0, 4) + " " + str.slice(4, 8);
                     return toReturn;
                 }
 
