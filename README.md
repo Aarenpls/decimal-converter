@@ -2,7 +2,7 @@
 
 <a href="https://aaroncql.github.io/CS2100-tools/">Try it out!</a>
 
-1) Converts decimal integers to binary (base-2), octenary (base-8), and
+1) Converts decimal integers to binary (base-2), octal (base-8), and
 hexadecimal (base-16) notations
 2) Converts floating point numbers to IEEE 754 single-precision format
 
