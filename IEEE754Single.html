@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <style media="screen">
+            body{
+                margin-top:70px;
+                background:#161616;
+                color:#efefef;
+            }
+
+            #binaryOutput {
+                font-family: consolas, monospace;
+                text-align: right;
+                font-size: 20px;
+            }
+
+            #hexOutput {
+                font-family: consolas, monospace;
+                text-align: right;
+                font-size: 20px;
+            }
+
+            .container-fluid {
+                max-width: 750px;
+            }
+
+        </style>
+        <title>IEEE 754 Single-Precision Format</title>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-10 offset-md-1">
+                    <h1 class="display-4 text-center mb-5">IEEE 754 Single-Precision</h1>
+                    <form>
+                        <div class="form-group">
+                            <input
+                            id="numInput"
+                            type="number"
+                            step="any"
+                            class="form-control form-control-lg"
+                            placeholder="Enter a Float:"
+                            >
+
+                        </div>
+                    </form>
+
+                    <div class="card bg-danger mb-2">
+                        <div class="card-body">
+                            <h4>Binary:</h4>
+                            <div class="form">
+                            </div>
+                            <div id="binaryOutput">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="output">
+                        <div class="card bg-success mb-2">
+                            <div class="card-body">
+                                <h4>Hex:</h4>
+                                <div class="form">
+                                </div>
+                                <div id="hexOutput">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            document.getElementById('numInput').addEventListener('input', function(e){
+                let num = e.target.value;
+
+                function floatToIEEE(f) {
+                    let buf = new ArrayBuffer(4);
+                    (new Float32Array(buf))[0] = f;
+                    let IEEE = (new Uint32Array(buf))[0];
+                    return IEEE;
+                }
+
+                function binFormat(IEEE) {
+                    const str = IEEE.toString(2).padStart(32, "0");
+                    const toReturn = str.slice(0, 4) + " " + str.slice(4, 8)
+                                    + " " + str.slice(8, 12) + " " + str.slice(12, 16)
+                                    + " " + str.slice(16, 20) + " " + str.slice(20, 24)
+                                    + " " + str.slice(24, 28) + " " + str.slice(28, 32);
+                    return toReturn;
+                }
+
+                function hexFormat(IEEE) {
+                    const str = IEEE.toString(16).toUpperCase();
+                    const toReturn = "0x " + str.slice(0, 4) + " " + str.slice(4, 8);
+                    return toReturn;
+                }
+
+                let IEEEnum = floatToIEEE(num);
+                document.getElementById('binaryOutput').innerHTML = binFormat(IEEEnum);
+                document.getElementById('hexOutput').innerHTML = hexFormat(IEEEnum);
+            });
+        </script>
+
+    </body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <style media="screen">
+            body{
+                margin-top:70px;
+                background:#161616;
+                color:#efefef;
+            }
+
+            #binaryOutput{
+                font-family: consolas, monospace;
+                text-align: right;
+                font-size: 20px;
+            }
+
+            #octOutput{
+                font-family: consolas, monospace;
+                text-align: right;
+                font-size: 20px;
+            }
+
+            #hexOutput{
+                font-family: consolas, monospace;
+                text-align: right;
+                font-size: 20px;
+            }
+
+            .container-fluid {
+                max-width: 750px;
+            }
+
+        </style>
+        <title>Base Converter</title>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-10 offset-md-1">
+                    <h1 class="display-4 text-center mb-5">Base Converter</h1>
+                    <form>
+                        <div class="form-group">
+                            <input
+                            id="numInput"
+                            type="number"
+                            max="4294967295"
+                            step="1"
+                            class="form-control form-control-lg"
+                            placeholder="Enter an integer:"
+                            >
+
+                        </div>
+
+                    </form>
+
+                    <div id="output">
+                        <div class="card bg-danger mb-2">
+                            <div class="card-body">
+                                <h4>Binary:</h4>
+                                <div class="form">
+                                </div>
+                                <div id="binaryOutput">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card bg-primary mb-2">
+                            <div class="card-body">
+                                <h4>Oct:</h4>
+                                <div id="octOutput">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card bg-success mb-2">
+                            <div class="card-body">
+                                <h4>Hex:</h4>
+                                <div id="hexOutput">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card bg-dark mb-2">
+                            <div class="card-body">
+                                <h6 class="card-subtitle text-muted">Note: negative numbers are converted to 32 bit <a href="https://en.wikipedia.org/wiki/Two%27s_complement">Two's complement</a> notation</h6>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            document.getElementById('numInput').addEventListener('input', function(e){
+                let num = e.target.value;
+
+                function decToBin(dec) {
+                    return (dec >>> 0).toString(2);
+                }
+
+                function decToOct(dec) {
+                    return (dec >>> 0).toString(8);
+                }
+
+                function decToHex(dec) {
+                    const str = (dec >>> 0).toString(16).toUpperCase().padStart(8, "0");
+                    const toReturn = "0x " + str.slice(0, 4) + " " + str.slice(4, 8);
+                    return toReturn;
+                }
+
+                document.getElementById('binaryOutput').innerHTML = decToBin(num);
+                document.getElementById('octOutput').innerHTML = decToOct(num);
+                document.getElementById('hexOutput').innerHTML = decToHex(num);
+            });
+        </script>
+
+    </body>
+</html>
