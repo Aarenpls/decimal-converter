@@ -36,13 +36,12 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-8 offset-md-2">
-                    <h1 class="display-4 text-center mb-5">Number Converter</h1>
+                    <h1 class="display-4 text-center mb-5">Base Converter</h1>
                     <form>
                         <div class="form-group">
                             <input
                             id="numInput"
                             type="number"
-                            min="0"
                             class="form-control form-control-lg"
                             placeholder="Enter Decimal:"
                             >
@@ -50,16 +49,19 @@
                         </div>
 
                     </form>
+
                     <div id="output">
-                        <div class="card bg-primary mb-2">
+                        <div class="card bg-danger mb-2">
                             <div class="card-body">
                                 <h4>Binary:</h4>
+                                <div class="form">
+                                </div>
                                 <div id="binaryOutput">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="card bg-success mb-2">
+                        <div class="card bg-primary mb-2">
                             <div class="card-body">
                                 <h4>Oct:</h4>
                                 <div id="octOutput">
@@ -67,11 +69,16 @@
                             </div>
                         </div>
 
-                        <div class="card bg-danger mb-2">
+                        <div class="card bg-success mb-2">
                             <div class="card-body">
                                 <h4>Hex:</h4>
                                 <div id="hexOutput">
                                 </div>
+                            </div>
+                        </div>
+                        <div class="card bg-dark mb-2">
+                            <div class="card-body">
+                                <h6 class="card-subtitle text-muted">Note: negative numbers are converted to 32 bit <a href="https://en.wikipedia.org/wiki/Two%27s_complement">Two's complement</a> notation</h6>
                             </div>
                         </div>
 
@@ -93,7 +100,7 @@
                 }
 
                 function decToHex(dec) {
-                    return (dec >>> 0).toString(16).toUpperCase();
+                    return "0x" + (dec >>> 0).toString(16).toUpperCase();
                 }
 
                 document.getElementById('binaryOutput').innerHTML = decToBin(num);
