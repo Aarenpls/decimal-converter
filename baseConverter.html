@@ -14,20 +14,20 @@
                 color:#efefef;
             }
 
-            #binaryOutput{
+            #binaryOutput {
                 font-family: consolas, monospace;
                 text-align: right;
                 font-size: 23px;
             }
 
-            #octOutput{
+            #octOutput {
                 font-family: consolas, monospace;
                 text-align: right;
                 font-size: 23px;
             }
 
-            #hexOutput{
-                font-family: consolas , monospace;
+            #hexOutput {
+                font-family: consolas, monospace;
                 text-align: right;
                 font-size: 23px;
             }
@@ -38,7 +38,13 @@
             }
 
             .breadcrumb {
-                background:#2E2E2E;
+                background: #2E2E2E;
+            }
+
+            #numInput {
+                background: #1f1f1f;
+                color: #efefef;
+                border-color: #a5a5a5;
             }
 
         </style>
@@ -57,6 +63,7 @@
             <div class="row">
                 <div class="col-md-10 offset-md-1">
                     <h1 class="display-4 text-center mb-5">Base Converter</h1>
+
                     <form>
                         <div class="form-group">
                             <input
@@ -69,10 +76,10 @@
                             >
 
                         </div>
-
                     </form>
 
                     <div id="output">
+                        
                         <div class="card bg-danger mb-2">
                             <div class="card-body">
                                 <h4>Binary:</h4>
@@ -98,9 +105,10 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="card bg-dark mb-2">
                             <div class="card-body">
-                                <h6 class="card-subtitle text-muted">Note: negative numbers are converted to 32 bit <a href="https://en.wikipedia.org/wiki/Two%27s_complement">two's complement</a> notation</h6>
+                                <h6 class="card-subtitle text-muted">Note: negative numbers are converted to 32 bit <a href="https://en.wikipedia.org/wiki/Two%27s_complement" class="text-info">two's complement</a> notation</h6>
                             </div>
                         </div>
 
