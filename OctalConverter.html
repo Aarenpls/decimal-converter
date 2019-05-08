@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+        <style media="screen">
+            body{
+                background:#161616;
+                color:#efefef;
+            }
+
+            #decimalOutput {
+                font-family: consolas, monospace;
+                text-align: right;
+                font-size: 23px;
+            }
+
+            #binOutput {
+                font-family: consolas, monospace;
+                text-align: right;
+                font-size: 23px;
+            }
+
+            #hexOutput {
+                font-family: consolas, monospace;
+                text-align: right;
+                font-size: 23px;
+            }
+
+            .container-fluid {
+                max-width: 750px;
+                margin-top: 50px;
+            }
+
+            .breadcrumb {
+                background: #2E2E2E;
+            }
+
+            #numInput {
+                background: #1f1f1f;
+                color: #efefef;
+                border-color: #a5a5a5;
+            }
+
+        </style>
+        <title>Base Converter</title>
+    </head>
+    <body>
+
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Base Converter</li>
+          </ol>
+        </nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-10 offset-md-1">
+                    <h1 class="display-4 text-center mb-5">Base Converter</h1>
+
+
+                    <div class="card bg-dark mb-2">
+                        <div class="card-body">
+                            <h4>Decimal:</h4>
+                            <div id="decimalOutput">0
+                            </div>
+                            <a href="DecimalConverter.html" class="stretched-link"></a>
+                        </div>
+                    </div>
+
+                    <div class="card bg-danger mb-2">
+                        <div class="card-body">
+                            <h4>Binary:</h4>
+                            <div id="binOutput">0
+                            </div>
+                            <a href="BinConverter.html" class="stretched-link"></a>
+                        </div>
+                    </div>
+
+                    <div class="card bg-primary mb-2">
+                        <div class="card-body">
+                            <h4>Octal:</h4>
+                            <form>
+                                <div class="form-group">
+                                    <input
+                                    id="numInput"
+                                    type="number"
+                                    class="form-control form-control-lg"
+                                    placeholder="Enter an octal number:"
+                                    >
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card bg-success mb-2">
+                        <div class="card-body">
+                            <h4>Hexadecimal:</h4>
+                            <div id="hexOutput">0
+                            </div>
+                            <a href="HexConverter.html" class="stretched-link"></a>
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark mb-2">
+                        <div class="card-body">
+                            <h6 class="card-subtitle text-muted">Note: negative numbers are converted to 32 bit <a href="https://en.wikipedia.org/wiki/Two%27s_complement" class="text-info">two's complement</a> notation</h6>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            document.getElementById('numInput').addEventListener('input', function(e){
+                let num = e.target.value;
+                let decimalNum;
+
+                function octToDec(oct) {
+                    const int = parseInt(oct, 8);
+                    decimalNum = int;
+                    if (int.length <= 4) {
+                        return int;
+                    } else {
+                        return formatOutput(int.toString());
+                    }
+                }
+
+                function decToBin(dec) {
+                    const str = (dec >>> 0).toString(2);
+                    if (str.length <= 4) {
+                        return str;
+                    } else {
+                        return formatOutput(str);
+                    }
+                }
+
+                function decToHex(dec) {
+                    const str = (dec >>> 0).toString(16).toUpperCase();
+                    if (str.length <= 4) {
+                        return str;
+                    } else {
+                        return formatOutput(str);
+                    }
+                }
+
+                function formatOutput(str) {
+                    let toReturn = str.slice(0, str.length % 4);
+                    for (let i = str.length % 4; i < str.length; i = i + 4) {
+                        toReturn = toReturn + " " + str.slice(i, i + 4);
+                    }
+                    return toReturn;
+                }
+
+                document.getElementById('decimalOutput').innerHTML = octToDec(num);
+                document.getElementById('binOutput').innerHTML = decToBin(decimalNum);
+                document.getElementById('hexOutput').innerHTML = decToHex(decimalNum);
+            });
+        </script>
+
+    </body>
+</html>
