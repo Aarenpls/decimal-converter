@@ -125,6 +125,7 @@
 
                 function octToDec(oct) {
                     const int = parseInt(oct, 8);
+                    if (isNaN(int)) return 0;
                     decimalNum = int;
                     if (int.length <= 4) {
                         return int;

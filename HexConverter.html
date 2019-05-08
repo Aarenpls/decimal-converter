@@ -88,7 +88,7 @@
                             <h4>Octal:</h4>
                             <div id="octOutput">0
                             </div>
-                            <a href="OctalConverter.html" class="stretched-link"></a>                            
+                            <a href="OctalConverter.html" class="stretched-link"></a>
                         </div>
                     </div>
 
@@ -125,6 +125,7 @@
 
                 function hexToDec(hex) {
                     const int = parseInt(hex, 16);
+                    if (isNaN(int)) return 0;
                     decimalNum = int;
                     if (int.length <= 4) {
                         return int;
