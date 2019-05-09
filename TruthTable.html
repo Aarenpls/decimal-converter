@@ -24,6 +24,7 @@
             }
 
             #boolInput {
+                font-family: consolas, monospace;
                 background: #1f1f1f;
                 color: #efefef;
                 border-color: #a5a5a5;
@@ -34,6 +35,39 @@
                 text-align: center;
                 font-size: 23px;
                 line-height: 23px;
+            }
+
+            #helpText {
+                font-size: 18px;
+            }
+
+            code {
+                font-family: consolas, monospace;
+                font-size: 18px;
+                color: #76B6FF;
+                font-weight: 400;
+            }
+
+            .nav-link {
+                color: #efefef;
+            }
+
+            .custom > li > a:hover {
+                color: #76b6ff;
+            }
+
+            .table {
+                font-size: 18px;
+                text-align: center;
+                color: #efefef;
+            }
+
+            th {
+                font-weight: 400;
+            }
+
+            tbody {
+                font-family: consolas, monospace;
             }
 
         </style>
@@ -55,29 +89,90 @@
 
                     <form>
                         <div class="form-row align-items-center mb-2">
-                            <div class="col-md-10">
+                            <div class="col-md-8">
                                 <input
                                 id="boolInput"
                                 type="text"
-                                pattern="[a-zA-Z10()!|&]"
+                                pattern="[a-zA-Z()!|&]"
                                 title="Only variable names, A-Z, and logical operators NOT[!], AND[&], OR[|] allowed. e.g. for '(NOT A) OR B', input as '!A | B'."
-                                class="form-control form-control-lg"
+                                class="required form-control form-control-lg"
                                 placeholder="Enter a valid boolean expression:"
                                 >
                             </div>
                             <div class="col-md-2">
-                                <button onclick="parseExp(); return false" class="btn btn-lg btn-danger">Eval!</button>
+                                <button onclick="parseExp(); return false" class="btn btn-lg btn-success btn-block">Eval</button>
+                            </div>
+                            <div class="col-md-2">
+                                <a role="button" class="btn btn-info btn-lg btn-block" data-toggle="collapse" aria-expanded="false" aria-controls="helpText" href="#helpText">Help</a>
                             </div>
                         </div>
                     </form>
 
-                    <div class="card bg-dark mb-2">
-                        <div class="card-body">
-                            <h6 class="card-subtitle text-muted">Use only "!", "&", "!", "()"</h6>
+                    <div class="collapse" id="helpText">
+                        <div class="card bg-dark mb-2">
+                            <div class="card-header">
+                                <ul class="nav nav-tabs card-header-tabs pull-right custom"  id="myTab" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="instruction-tab" data-toggle="tab" href="#instruction" role="tab" aria-controls="instruction" aria-selected="true">Instructions</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="cheatsheet-tab" data-toggle="tab" href="#cheatsheet" role="tab" aria-controls="cheatsheet" aria-selected="false">Cheatsheet</a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane fade show active" id="instruction" role="tabpanel" aria-labelledby="instruction-tab">
+                                        <p>For variable names, use alphabets <code>A</code> to <code>Z</code>. Only 4 unique variables can be used (at least for now).</p>
+                                        <p>For logical operators, use <<code>!</code>> for NOT, <<code>&</code>> for AND, <<code>|</code>> for OR. Only these three operators are available; if other gates like XNOR, NAND, etc, are needed, conversion is necessary (refer to cheatsheet).</p>
+                                        <p>eg. To generate the truth table for
+                                        </br><code>A' OR (B OR C')'</code>
+                                        </br>the input ought to be
+                                        </br><code>!A | !(B | !C)</code>
+                                        </p>
+                                        <p><b>Note</b>: please ensure input is correct as there is no input validation.</p>
+                                    </div>
+                                    <div class="tab-pane fade" id="cheatsheet" role="tabpanel" aria-labelledby="cheatsheet-tab">
+                                        <table class="table table-dark table-bordered table-hover mb-2">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Operator</th>
+                                                    <th scope="col">Example</th>
+                                                    <th scope="col">Converted Form</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="col" id="sign">NAND</th>
+                                                    <th scope="col" id="exponent">A NAND B</th>
+                                                    <th scope="col" id="mantissa">!(A & B)</th>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="col" id="sign">NOR</th>
+                                                    <th scope="col" id="exponent">A NOR B</th>
+                                                    <th scope="col" id="mantissa">!(A | B)</th>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="col" id="sign">XOR</th>
+                                                    <th scope="col" id="exponent">A XOR B</th>
+                                                    <th scope="col" id="mantissa">(A | B) & (!A | !B)</th>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="col" id="sign">XNOR</th>
+                                                    <th scope="col" id="exponent">A XNOR B</th>
+                                                    <th scope="col" id="mantissa">(A & B) | (!A & !B)</th>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
-                    <div class="card bg-info mb-2">
+                    <div class="card bg-dark mb-2">
                         <div class="card-body">
                             <h4>Table:</h4>
                             <div id="truthTable">
@@ -89,13 +184,15 @@
             </div>
         </div>
 
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script type="text/javascript">
-
             function parseExp() {
                 const booleanExp = document.getElementById('boolInput').value;
                 // store in vars[] the unique variable names in ascending order
                 const vars = booleanExp
-                        .replace(/[\s+()&|!]/g, "")
+                        .replace(/[\s+()&|!01]/g, "")
                         .split("")
                         .filter((v, i, a) => a.indexOf(v) === i)
                         .sort();
