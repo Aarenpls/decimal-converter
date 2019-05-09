@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+        <style media="screen">
+            body {
+                background:#161616;
+                color:#efefef;
+            }
+
+            .container-fluid {
+                max-width: 750px;
+                margin-top: 50px;
+            }
+
+            .breadcrumb {
+                background: #2E2E2E;
+            }
+
+            #boolInput {
+                font-family: consolas, monospace;
+                background: #1f1f1f;
+                color: #efefef;
+                border-color: #a5a5a5;
+            }
+
+            #truthTable {
+                font-family: consolas, monospace;
+                text-align: center;
+                font-size: 23px;
+                line-height: 23px;
+            }
+
+            #helpText {
+                font-size: 18px;
+            }
+
+            code {
+                font-family: consolas, monospace;
+                font-size: 18px;
+                color: #76B6FF;
+                font-weight: 400;
+            }
+
+            .nav-link {
+                color: #efefef;
+            }
+
+            .custom > li > a:hover {
+                color: #76b6ff;
+            }
+
+            .table {
+                font-size: 18px;
+                text-align: center;
+                color: #efefef;
+            }
+
+            th {
+                font-weight: 400;
+            }
+
+            tbody {
+                font-family: consolas, monospace;
+            }
+
+        </style>
+        <title>Truth Table Generator</title>
+    </head>
+    <body>
+
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Truth Table Generator</li>
+          </ol>
+        </nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-10 offset-md-1">
+                    <h1 class="display-4 text-center mb-5">Truth Table Generator</h1>
+
+                    <form>
+                        <div class="form-row align-items-center mb-2">
+                            <div class="col-md-8">
+                                <input
+                                id="boolInput"
+                                type="text"
+                                pattern="[a-zA-Z()!|&]"
+                                title="Only variable names, A-Z, and logical operators NOT[!], AND[&], OR[|] allowed. e.g. for '(NOT A) OR B', input as '!A | B'."
+                                class="required form-control form-control-lg"
+                                placeholder="Enter a valid boolean expression:"
+                                >
+                            </div>
+                            <div class="col-md-2">
+                                <button onclick="parseExp(); return false" class="btn btn-lg btn-success btn-block">Eval</button>
+                            </div>
+                            <div class="col-md-2">
+                                <a role="button" class="btn btn-info btn-lg btn-block" data-toggle="collapse" aria-expanded="false" aria-controls="helpText" href="#helpText">Help</a>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="collapse" id="helpText">
+                        <div class="card bg-dark mb-2">
+                            <div class="card-header">
+                                <ul class="nav nav-tabs card-header-tabs pull-right custom"  id="myTab" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="instruction-tab" data-toggle="tab" href="#instruction" role="tab" aria-controls="instruction" aria-selected="true">Instructions</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="cheatsheet-tab" data-toggle="tab" href="#cheatsheet" role="tab" aria-controls="cheatsheet" aria-selected="false">Cheatsheet</a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane fade show active" id="instruction" role="tabpanel" aria-labelledby="instruction-tab">
+                                        <p>For variable names, use alphabets <code>A</code> to <code>Z</code>. Only 4 unique variables can be used (at least for now).</p>
+                                        <p>For logical operators, use <<code>!</code>> for NOT, <<code>&</code>> for AND, <<code>|</code>> for OR. Only these three operators are available; if other gates like XNOR, NAND, etc, are needed, conversion is necessary (refer to cheatsheet).</p>
+                                        <p>eg. To generate the truth table for
+                                        </br><code>A' OR (B OR C')'</code>
+                                        </br>the input ought to be
+                                        </br><code>!A | !(B | !C)</code>
+                                        </p>
+                                        <p><b>Note</b>: please ensure input is correct as there is no input validation.</p>
+                                    </div>
+                                    <div class="tab-pane fade" id="cheatsheet" role="tabpanel" aria-labelledby="cheatsheet-tab">
+                                        <table class="table table-dark table-bordered table-hover mb-2">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Operator</th>
+                                                    <th scope="col">Example</th>
+                                                    <th scope="col">Converted Form</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="col" id="sign">NAND</th>
+                                                    <th scope="col" id="exponent">A NAND B</th>
+                                                    <th scope="col" id="mantissa">!(A & B)</th>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="col" id="sign">NOR</th>
+                                                    <th scope="col" id="exponent">A NOR B</th>
+                                                    <th scope="col" id="mantissa">!(A | B)</th>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="col" id="sign">XOR</th>
+                                                    <th scope="col" id="exponent">A XOR B</th>
+                                                    <th scope="col" id="mantissa">(A | B) & (!A | !B)</th>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="col" id="sign">XNOR</th>
+                                                    <th scope="col" id="exponent">A XNOR B</th>
+                                                    <th scope="col" id="mantissa">(A & B) | (!A & !B)</th>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark mb-2">
+                        <div class="card-body">
+                            <h4>Table:</h4>
+                            <div id="truthTable">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            function parseExp() {
+                const booleanExp = document.getElementById('boolInput').value;
+                // store in vars[] the unique variable names in ascending order
+                const vars = booleanExp
+                        .replace(/[\s+()&|!01]/g, "")
+                        .split("")
+                        .filter((v, i, a) => a.indexOf(v) === i)
+                        .sort();
+                let ans;
+                if (vars.length === 2) {
+                    ans = twoVarSolver(booleanExp, vars);
+                    document.getElementById('truthTable').innerHTML = vars[0] + vars[1] + " | F" + "</br>" +
+                                                                      "<s>---|--</s>" + "</br>" +
+                                                                      "00 | " + ans[0] + "</br>" +
+                                                                      "01 | " + ans[1] + "</br>" +
+                                                                      "10 | " + ans[2] + "</br>" +
+                                                                      "11 | " + ans[3];
+                } else if (vars.length === 3) {
+                    ans = threeVarSolver(booleanExp, vars);
+                    document.getElementById('truthTable').innerHTML = vars[0] + vars[1] + vars[2] + " | F" + "</br>" +
+                                                                      "<s>----|--</s>" + "</br>" +
+                                                                      "000 | " + ans[0] + "</br>" +
+                                                                      "001 | " + ans[1] + "</br>" +
+                                                                      "010 | " + ans[2] + "</br>" +
+                                                                      "011 | " + ans[3] + "</br>" +
+                                                                      "100 | " + ans[4] + "</br>" +
+                                                                      "101 | " + ans[5] + "</br>" +
+                                                                      "110 | " + ans[6] + "</br>" +
+                                                                      "111 | " + ans[7];
+                } else if (vars.length === 4) {
+                    ans = fourVarSolver(booleanExp, vars);
+                    document.getElementById('truthTable').innerHTML = vars[0] + vars[1] + vars[2] + vars[3] + " | F" + "</br>" +
+                                                                      "<s>-----|--</s>" + "</br>" +
+                                                                      "0000 | " + ans[0] + "</br>" +
+                                                                      "0001 | " + ans[1] + "</br>" +
+                                                                      "0010 | " + ans[2] + "</br>" +
+                                                                      "0011 | " + ans[3] + "</br>" +
+                                                                      "0100 | " + ans[4] + "</br>" +
+                                                                      "0101 | " + ans[5] + "</br>" +
+                                                                      "0110 | " + ans[6] + "</br>" +
+                                                                      "0111 | " + ans[7] + "</br>" +
+                                                                      "1000 | " + ans[8] + "</br>" +
+                                                                      "1001 | " + ans[9] + "</br>" +
+                                                                      "1010 | " + ans[10] + "</br>" +
+                                                                      "1011 | " + ans[11] + "</br>" +
+                                                                      "1100 | " + ans[12] + "</br>" +
+                                                                      "1101 | " + ans[13] + "</br>" +
+                                                                      "1110 | " + ans[14] + "</br>" +
+                                                                      "1111 | " + ans[15];
+                }
+
+            }
+
+            function twoVarSolver(booleanExp, vars) {
+                const ans = [];
+                for (let i = 0; i < 2; i++) {
+                    const firstVar = new RegExp(vars[0], "g");
+                    for (let j = 0; j < 2; j++) {
+                        const secondVar = new RegExp(vars[1], "g");
+                        const currBool = booleanExp
+                                .replace(secondVar, j)
+                                .replace(firstVar, i);
+                        // +0 is to convert back to 1 or 0 instead of boolean true/false
+                        ans.push(eval(currBool) + 0);
+                    }
+                }
+                return ans;
+            }
+
+
+            function threeVarSolver(booleanExp, vars) {
+                const ans = [];
+                for (let i = 0; i < 2; i++) {
+                    const firstVar = new RegExp(vars[0], "g");
+                    for (let j = 0; j < 2; j++) {
+                        const secondVar = new RegExp(vars[1], "g");
+                        for (let k = 0; k < 2; k++) {
+                            const thirdVar = new RegExp(vars[2], "g");
+                            const currBool = booleanExp
+                                    .replace(thirdVar, k)
+                                    .replace(secondVar, j)
+                                    .replace(firstVar, i);
+                            // +0 is to convert back to 1 or 0 instead of boolean true/false
+                            ans.push(eval(currBool) + 0);
+                        }
+                    }
+                }
+                return ans;
+            }
+
+            function fourVarSolver(booleanExp, vars) {
+                const ans = [];
+                for (let i = 0; i < 2; i++) {
+                    const firstVar = new RegExp(vars[0], "g");
+                    for (let j = 0; j < 2; j++) {
+                        const secondVar = new RegExp(vars[1], "g");
+                        for (let k = 0; k < 2; k++) {
+                            const thirdVar = new RegExp(vars[2], "g");
+                            for (let l = 0; l < 2; l++) {
+                                const fourthVar = new RegExp(vars[3], "g");
+                                const currBool = booleanExp
+                                        .replace(fourthVar, l)
+                                        .replace(thirdVar, k)
+                                        .replace(secondVar, j)
+                                        .replace(firstVar, i);
+                                // +0 is to convert back to 1 or 0 instead of boolean true/false
+                                ans.push(eval(currBool) + 0);
+                            }
+                        }
+                    }
+                }
+                return ans;
+            }
+
+        </script>
+
+    </body>
+</html>
