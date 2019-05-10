@@ -128,11 +128,11 @@
                                 <div class="tab-content" id="myTabContent">
                                     <div class="tab-pane fade show active" id="instruction" role="tabpanel" aria-labelledby="instruction-tab">
                                         <p>For variable names, use alphabets <code>A</code> to <code>Z</code>. Only 4 unique variables can be used (at least for now). Use <code>1</code> for true and <code>0</code> for false.</p>
-                                        <p>For logical operators, use <<code>!</code>> for NOT, <<code>&</code>> for AND, <<code>|</code>> for OR. Only these three operators are available; if other gates like XNOR, NAND, etc, are needed, conversion is necessary (refer to cheatsheet). AND<<code>&</code>> will take precedence over OR<<code>|</code>>; use parenthesis<<code>()</code>> to avoid ambiguous expressions.</p>
+                                        <p>For logical operators, use <<code>!</code>> for NOT, <<code>&</code>> for AND, <<code>|</code>> for OR, <<code>^</code>> for XOR. Only these four operators are available; if other gates like XNOR, NAND, etc, are needed, conversion is necessary (refer to cheatsheet). AND<<code>&</code>> will take precedence over OR<<code>|</code>>; use parenthesis<<code>()</code>> to avoid ambiguous expressions.</p>
                                         <p>eg. To generate the truth table for
-                                        </br><code>(A AND B) OR (1 AND C')'</code>
+                                        </br><code>(A AND B) OR (1 XOR C')'</code>
                                         </br>The input should be
-                                        </br><code>(A & B) | !(1 & !C)</code>
+                                        </br><code>(A & B) | !(1 ^ !C)</code>
                                         </p>
                                         <p><b>Note</b>: the input validation may not account for all errors, please ensure the syntax of the input is correct.</p>
                                     </div>
@@ -157,14 +157,9 @@
                                                     <th scope="col" id="mantissa">!(A | B)</th>
                                                 </tr>
                                                 <tr>
-                                                    <th scope="col" id="sign">XOR</th>
-                                                    <th scope="col" id="exponent">A XOR B</th>
-                                                    <th scope="col" id="mantissa">(A | B) & (!A | !B)</th>
-                                                </tr>
-                                                <tr>
                                                     <th scope="col" id="sign">XNOR</th>
                                                     <th scope="col" id="exponent">A XNOR B</th>
-                                                    <th scope="col" id="mantissa">(A & B) | (!A & !B)</th>
+                                                    <th scope="col" id="mantissa">!(A ^ B)</th>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -199,7 +194,7 @@
                 const booleanExp = document.getElementById('boolInput').value;
                 // allVars is a string of all the variable names (non-distinct)
                 const allVars = booleanExp
-                        .replace(/[\s+()&|!01]/g, "")
+                        .replace(/[\s+()&|!^01]/g, "")
                         .trim();
                 // vars[] contains only unique variable names
                 const uniqueVars = allVars
@@ -221,7 +216,7 @@
                 // check if there are any special characters used
                 } else if (specialChar.test(allVars)) {
                     document.getElementById('truthTable').innerHTML = "";
-                    document.getElementById('errMsg').innerHTML = "Syntax error: illegal special character " + allVars.replace(/[a-zA-Z]/g, "");
+                    document.getElementById('errMsg').innerHTML = "Syntax error: illegal special character " + allVars.replace(/[a-zA-Z]/g, "").split("");
                 // check if all the variables are operated on properly
                 } else if (ops.length > 0) {
                     document.getElementById('truthTable').innerHTML = "";
