@@ -218,14 +218,14 @@
                 if (otherNums.test(allVars)) {
                     document.getElementById('truthTable').innerHTML = "";
                     document.getElementById('errMsg').innerHTML = "Syntax error: illegal number " + allVars.replace(/[^2-9]/g, "").split("");
-                // check if all the variables are operated on properly
-                } else if (ops.length > 0) {
-                    document.getElementById('truthTable').innerHTML = "";
-                    document.getElementById('errMsg').innerHTML = "Syntax error: missing logical operator between " + ops.toString();
                 // check if there are any special characters used
                 } else if (specialChar.test(allVars)) {
                     document.getElementById('truthTable').innerHTML = "";
                     document.getElementById('errMsg').innerHTML = "Syntax error: illegal special character " + allVars.replace(/[a-zA-Z]/g, "");
+                // check if all the variables are operated on properly
+                } else if (ops.length > 0) {
+                    document.getElementById('truthTable').innerHTML = "";
+                    document.getElementById('errMsg').innerHTML = "Syntax error: missing logical operator between " + ops.toString();
                 // check if there are enough variables used
                 } else if (uniqueVars.length < 2) {
                     document.getElementById('truthTable').innerHTML = "";
