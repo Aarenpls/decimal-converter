@@ -130,7 +130,7 @@
                     if (int.length <= 4) {
                         return int;
                     } else {
-                        return formatOutput(int.toString());
+                        return formatDec(int.toString());
                     }
                 }
 
@@ -156,6 +156,14 @@
                     let toReturn = str.slice(0, str.length % 4);
                     for (let i = str.length % 4; i < str.length; i = i + 4) {
                         toReturn = toReturn + " " + str.slice(i, i + 4);
+                    }
+                    return toReturn;
+                }
+
+                function formatDec(str) {
+                    let toReturn = str.slice(0, str.length % 3);
+                    for (let i = str.length % 3; i < str.length; i = i + 3) {
+                        toReturn = toReturn + " " + str.slice(i, i + 3);
                     }
                     return toReturn;
                 }
