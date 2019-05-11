@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+        <style media="screen">
+            body {
+                margin-top: 0px;
+                background: #161616;
+                color: #efefef;
+            }
+
+            #binaryOutput, #hexOutput {
+                font-family: consolas, monospace;
+                text-align: right;
+                font-size: 23px;
+            }
+
+            .container-fluid {
+                max-width: 750px;
+                margin-top: 50px;
+            }
+
+            th {
+                font-size: 23px;
+                font-weight: 400;
+                text-align: center;
+                color: #efefef;
+            }
+
+            #sign, #exponent, #mantissa {
+                font-family: consolas, monospace;
+            }
+
+            .breadcrumb {
+                background:#2E2E2E;
+            }
+
+            #numInput {
+                background: #1f1f1f;
+                color: #efefef;
+                border-color: #a5a5a5;
+            }
+
+        </style>
+        <title>IEEE 754 Single-Precision Format</title>
+    </head>
+    <body>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">IEEE 754</li>
+          </ol>
+        </nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-10 offset-md-1">
+                    <h1 class="display-4 text-center mb-5">IEEE 754 Single-Precision</h1>
+
+                    <div class="card bg-dark mb-2">
+                        <div class="card-body">
+                            <form>
+                                <div class="form-row">
+                                    <div class="col-md-auto dropdown">
+                                        <button class="btn btn-lg btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Float:
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item" href="IEEEHexToFloat.html">Hexadecimal</a>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md">
+                                        <input
+                                        id="numInput"
+                                        type="number"
+                                        step="any"
+                                        class="form-control form-control-lg"
+                                        placeholder="eg. -9.23"
+                                        >
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-danger bg-danger table-bordered table-hover mb-2">
+                            <thead>
+                                <tr>
+                                    <th style="width:10%" scope="col">Sign</th>
+                                    <th style="width:24%" scope="col">Exponent</th>
+                                    <th style="width:66%" scope="col">Mantissa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="col" id="sign">-</th>
+                                    <th scope="col" id="exponent">-</th>
+                                    <th scope="col" id="mantissa">-</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="cards">
+                        <div class="card bg-primary mb-2">
+                            <div class="card-body">
+                                <h4>Binary:</h4>
+                                <div id="binaryOutput">-
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card bg-success mb-2">
+                            <div class="card-body">
+                                <h4>Hexadecimal:</h4>
+                                <div id="hexOutput">-
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card bg-dark mb-2">
+                            <div class="card-body">
+                                <h6 class="card-subtitle text-muted">Note: the mantissa will be rounded up, as opposed to truncated, if the 24th bit of the mantissa is a 1.</h6>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            document.getElementById('numInput').addEventListener('input', function(e) {
+                let num = e.target.value;
+
+                function floatToHex(f) {
+                    const buf = new ArrayBuffer(4);
+                    (new Float32Array(buf))[0] = f;
+                    const hex = (new Uint32Array(buf))[0];
+                    return hex;
+                }
+
+                function binFormat(IEEE) {
+                    const binNum = IEEE.toString();
+                    const toReturn = binNum.slice(0, 4) + " " + binNum.slice(4, 8)
+                                    + " " + binNum.slice(8, 12) + " " + binNum.slice(12, 16)
+                                    + " " + binNum.slice(16, 20) + " " + binNum.slice(20, 24)
+                                    + " " + binNum.slice(24, 28) + " " + binNum.slice(28, 32);
+                    return toReturn;
+                }
+
+                function hexFormat(hex) {
+                    const str = hex.toString(16).toUpperCase().padStart(8, "0");
+                    const toReturn = "0x" + str.slice(0, 4) + " " + str.slice(4, 8);
+                    return toReturn;
+                }
+
+                if (num * 1 === 0) {
+                    document.getElementById('binaryOutput').innerHTML = "-";
+                    document.getElementById('hexOutput').innerHTML = "-";
+                    document.getElementById('sign').innerHTML = "-";
+                    document.getElementById('exponent').innerHTML = "-";
+                    document.getElementById('mantissa').innerHTML = "-";
+                } else {
+                    const hex = floatToHex(num);
+                    const binNum = hex.toString(2).padStart(32, "0");
+                    document.getElementById('binaryOutput').innerHTML = binFormat(binNum);
+                    document.getElementById('hexOutput').innerHTML = hexFormat(hex);
+                    document.getElementById('sign').innerHTML = binNum.slice(0, 1);
+                    document.getElementById('exponent').innerHTML = binNum.slice(1, 9);
+                    document.getElementById('mantissa').innerHTML = binNum.slice(9, 32);
+                }
+            });
+        </script>
+
+    </body>
+</html>

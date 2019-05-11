@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+        <style media="screen">
+            body {
+                margin-top: 0px;
+                background: #161616;
+                color: #efefef;
+            }
+
+            #binaryOutput, #floatOutput {
+                font-family: consolas, monospace;
+                text-align: right;
+                font-size: 23px;
+            }
+
+            .container-fluid {
+                max-width: 750px;
+                margin-top: 50px;
+            }
+
+            th {
+                font-size: 23px;
+                font-weight: 400;
+                text-align: center;
+                color: #efefef;
+            }
+
+            #sign, #exponent, #mantissa {
+                font-family: consolas, monospace;
+            }
+
+            .breadcrumb {
+                background:#2E2E2E;
+            }
+
+            #numInput {
+                background: #1f1f1f;
+                color: #efefef;
+                border-color: #a5a5a5;
+            }
+
+            #errMsg {
+                text-align: center;
+                font-size: 20px;
+                color: #76B6FF;
+            }
+
+        </style>
+        <title>IEEE 754 Single-Precision Format</title>
+    </head>
+    <body>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">IEEE 754</li>
+          </ol>
+        </nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-10 offset-md-1">
+                    <h1 class="display-4 text-center mb-5">IEEE 754 Single-Precision</h1>
+
+                    <div class="card bg-dark mb-2">
+                        <div class="card-body">
+                            <form>
+                                <div class="form-row mb-2">
+                                    <div class="col-md-auto dropdown">
+                                        <button class="btn btn-lg btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Hexadecimal:
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item" href="IEEE754Single.html">Float</a>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md">
+                                        <input
+                                        id="numInput"
+                                        type="text"
+                                        maxlength="8"
+                                        class="form-control form-control-lg"
+                                        placeholder="eg. 98A9FF2E"
+                                        >
+                                    </div>
+
+                                </div>
+                                <div id="errMsg">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-danger bg-danger table-bordered table-hover mb-2">
+                            <thead>
+                                <tr>
+                                    <th style="width:10%" scope="col">Sign</th>
+                                    <th style="width:24%" scope="col">Exponent</th>
+                                    <th style="width:66%" scope="col">Mantissa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="col" id="sign">-</th>
+                                    <th scope="col" id="exponent">-</th>
+                                    <th scope="col" id="mantissa">-</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="cards">
+                        <div class="card bg-primary mb-2">
+                            <div class="card-body">
+                                <h4>Binary:</h4>
+                                <div id="binaryOutput">-
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card bg-success mb-2">
+                            <div class="card-body">
+                                <h4>Float:</h4>
+                                <div id="floatOutput">-
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            document.getElementById('numInput').addEventListener('input', function(e) {
+                let num = e.target.value;
+
+                const hexLen = num.length;
+                const binNum = parseInt(num, 16)
+                        .toString(2)
+                        .padStart(hexLen * 4, "0");
+
+                function formatBin(str) {
+                    if (isNaN(str)) {
+                        return "-";
+                    } else {
+                        let toReturn = str.slice(0, str.length % 4);
+                        for (let i = str.length % 4; i < str.length; i = i + 4) {
+                            toReturn = toReturn + " " + str.slice(i, i + 4);
+                        }
+                        return toReturn;
+                    }
+                }
+
+                if (/[^0-9A-Fa-f]/.test(num)) {
+                    document.getElementById('binaryOutput').innerHTML = "-";
+                    document.getElementById('sign').innerHTML = "-";
+                    document.getElementById('exponent').innerHTML = "-";
+                    document.getElementById('mantissa').innerHTML = "-";
+                    document.getElementById('floatOutput').innerHTML = "-";
+                    document.getElementById('errMsg').innerHTML = "Hexadecimal numbers should only contain 0-9 and A-F";
+                    return false;
+                } else if (hexLen < 8) {
+                    document.getElementById('binaryOutput').innerHTML = formatBin(binNum);
+                    document.getElementById('sign').innerHTML = "-";
+                    document.getElementById('exponent').innerHTML = "-";
+                    document.getElementById('mantissa').innerHTML = "-";
+                    document.getElementById('floatOutput').innerHTML = "-";
+                    document.getElementById('errMsg').innerHTML = "";
+                    return false;
+                } else if (hexLen > 8) {
+                    document.getElementById('binaryOutput').innerHTML = "-";
+                    document.getElementById('sign').innerHTML = "-";
+                    document.getElementById('exponent').innerHTML = "-";
+                    document.getElementById('mantissa').innerHTML = "-";
+                    document.getElementById('floatOutput').innerHTML = "-";
+                    document.getElementById('errMsg').innerHTML = "";
+                    return false;
+                } else {
+                    document.getElementById('binaryOutput').innerHTML = formatBin(binNum);
+                    const sign = binNum.slice(0, 1);
+                    const binExpo = binNum.slice(1, 9);
+                    const binMan = binNum.slice(9, 32);
+
+                    const expo = 127 - parseInt(binExpo, 2);
+                    const man = "1" + binMan; // normalise the mantissa
+                    const e = -23 - expo; // mantissa is 23 bits
+                    const s = parseInt(sign) === 1 ? -1 : 1;
+                    const float = s * parseInt(man, 2) * Math.pow(2, e);
+                    document.getElementById('sign').innerHTML = sign;
+                    document.getElementById('exponent').innerHTML = binExpo;
+                    document.getElementById('mantissa').innerHTML = binMan;
+                    document.getElementById('floatOutput').innerHTML = float;
+                    document.getElementById('errMsg').innerHTML = "";
+                    return true;
+                }
+            });
+        </script>
+
+    </body>
+</html>
