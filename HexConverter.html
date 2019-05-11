@@ -14,22 +14,22 @@
                 color:#efefef;
             }
 
-            #decimalOutput {
+            #decOutput, #binOutput, #octOutput {
                 font-family: consolas, monospace;
                 text-align: right;
                 font-size: 23px;
             }
 
-            #binOutput {
-                font-family: consolas, monospace;
-                text-align: right;
-                font-size: 23px;
+            #errMsg {
+                text-align: center;
+                font-size: 20px;
+                color: #76B6FF;
             }
 
-            #octOutput {
-                font-family: consolas, monospace;
-                text-align: right;
-                font-size: 23px;
+            #numInput {
+                background: #1f1f1f;
+                color: #efefef;
+                border-color: #a5a5a5;
             }
 
             .container-fluid {
@@ -39,12 +39,6 @@
 
             .breadcrumb {
                 background: #2E2E2E;
-            }
-
-            #numInput {
-                background: #1f1f1f;
-                color: #efefef;
-                border-color: #a5a5a5;
             }
 
         </style>
@@ -64,16 +58,16 @@
                 <div class="col-md-10 offset-md-1">
                     <h1 class="display-4 text-center mb-5">Base Converter</h1>
 
-                    <div class="card bg-dark mb-2">
+                    <div class="card bg-danger mb-2">
                         <div class="card-body">
                             <h4>Decimal:</h4>
-                            <div id="decimalOutput">0
+                            <div id="decOutput">0
                             </div>
                             <a href="DecimalConverter.html" class="stretched-link"></a>
                         </div>
                     </div>
 
-                    <div class="card bg-danger mb-2">
+                    <div class="card bg-primary mb-2">
                         <div class="card-body">
                             <h4>Binary:</h4>
                             <div id="binOutput">0
@@ -82,7 +76,7 @@
                         </div>
                     </div>
 
-                    <div class="card bg-primary mb-2">
+                    <div class="card bg-success mb-2">
                         <div class="card-body">
                             <h4>Octal:</h4>
                             <div id="octOutput">0
@@ -91,7 +85,7 @@
                         </div>
                     </div>
 
-                    <div class="card bg-success mb-2">
+                    <div class="card bg-dark mb-2">
                         <div class="card-body">
                             <h4>Hexadecimal:</h4>
                             <form>
@@ -104,12 +98,8 @@
                                     >
                                 </div>
                             </form>
-                        </div>
-                    </div>
-
-                    <div class="card bg-dark mb-2">
-                        <div class="card-body">
-                            <h6 class="card-subtitle text-muted">Note: negative numbers are converted to 32 bit <a href="https://en.wikipedia.org/wiki/Two%27s_complement" class="text-info">two's complement</a> notation</h6>
+                            <div id="errMsg">
+                            </div>
                         </div>
                     </div>
 
@@ -167,9 +157,30 @@
                     return toReturn;
                 }
 
-                document.getElementById('decimalOutput').innerHTML = hexToDec(num);
-                document.getElementById('binOutput').innerHTML = decToBin(decimalNum);
-                document.getElementById('octOutput').innerHTML = decToOct(decimalNum);
+                if (parseInt(num, 16) > 4294967295) {
+                    document.getElementById('errMsg').innerHTML = "Hexadecimal numbers cannot be more than 0xFFFF FFFF!";
+                    document.getElementById('decOutput').innerHTML = "-";
+                    document.getElementById('binOutput').innerHTML = "-";
+                    document.getElementById('octOutput').innerHTML = "-";
+                    return false;
+                } else if (num < 0) {
+                    document.getElementById('errMsg').innerHTML = "Negative numbers not allowed for hexadecimal conversion";
+                    document.getElementById('decOutput').innerHTML = "-";
+                    document.getElementById('binOutput').innerHTML = "-";
+                    document.getElementById('octOutput').innerHTML = "-";
+                    return false;
+                } else if (/[^0-9A-Fa-f]/.test(num)) {
+                    document.getElementById('errMsg').innerHTML = "Hexadecimal numbers should only contain 0-9 and A-F ";
+                    document.getElementById('decOutput').innerHTML = "-";
+                    document.getElementById('binOutput').innerHTML = "-";
+                    document.getElementById('octOutput').innerHTML = "-";
+                    return false;
+                }  else {
+                    document.getElementById('errMsg').innerHTML = "";
+                    document.getElementById('decOutput').innerHTML = hexToDec(num);
+                    document.getElementById('binOutput').innerHTML = decToBin(decimalNum);
+                    document.getElementById('octOutput').innerHTML = decToOct(decimalNum);
+                }
             });
         </script>
 

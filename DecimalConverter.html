@@ -9,27 +9,27 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
         <style media="screen">
-            body{
+            body {
                 background:#161616;
                 color:#efefef;
             }
 
-            #binaryOutput {
+            #binaryOutput, #octOutput, #hexOutput {
                 font-family: consolas, monospace;
                 text-align: right;
                 font-size: 23px;
             }
 
-            #octOutput {
-                font-family: consolas, monospace;
-                text-align: right;
-                font-size: 23px;
+            #errMsg {
+                text-align: center;
+                font-size: 20px;
+                color: #76B6FF;
             }
 
-            #hexOutput {
-                font-family: consolas, monospace;
-                text-align: right;
-                font-size: 23px;
+            #numInput {
+                background: #1f1f1f;
+                color: #efefef;
+                border-color: #a5a5a5;
             }
 
             .container-fluid {
@@ -39,12 +39,6 @@
 
             .breadcrumb {
                 background: #2E2E2E;
-            }
-
-            #numInput {
-                background: #1f1f1f;
-                color: #efefef;
-                border-color: #a5a5a5;
             }
 
         </style>
@@ -73,12 +67,15 @@
                                     id="numInput"
                                     type="number"
                                     max="4294967295"
+                                    min="-4294967296"
                                     step="1"
                                     class="form-control form-control-lg"
                                     placeholder="Enter a decimal number:"
                                     >
                                 </div>
                             </form>
+                            <div id="errMsg">
+                            </div>
                         </div>
                     </div>
 
@@ -122,7 +119,7 @@
         <script type="text/javascript">
             document.getElementById('numInput').addEventListener('input', function(e){
                 let num = e.target.value;
-
+                
                 function decToBin(dec) {
                     const str = (dec >>> 0).toString(2);
                     if (str.length <= 4) {
@@ -158,9 +155,30 @@
                     return toReturn;
                 }
 
-                document.getElementById('binaryOutput').innerHTML = decToBin(num);
-                document.getElementById('octOutput').innerHTML = decToOct(num);
-                document.getElementById('hexOutput').innerHTML = decToHex(num);
+                if (num > 4294967295) {
+                    document.getElementById('errMsg').innerHTML = "Positive numbers cannot be more than 4,294,967,295";
+                    document.getElementById('binaryOutput').innerHTML = "-";
+                    document.getElementById('octOutput').innerHTML = "-";
+                    document.getElementById('hexOutput').innerHTML = "-";
+                    return false;
+                } else if (num < -4294967296) {
+                    document.getElementById('errMsg').innerHTML = "Negative numbers cannot be less than -4,294,967,296";
+                    document.getElementById('binaryOutput').innerHTML = "-";
+                    document.getElementById('octOutput').innerHTML = "-";
+                    document.getElementById('hexOutput').innerHTML = "-";
+                    return false;
+                } else if (num.toString().includes(".")) {
+                    document.getElementById('errMsg').innerHTML = "Floating point numbers are not allowed!";
+                    document.getElementById('binaryOutput').innerHTML = "-";
+                    document.getElementById('octOutput').innerHTML = "-";
+                    document.getElementById('hexOutput').innerHTML = "-";
+                    return false;
+                } else {
+                    document.getElementById('errMsg').innerHTML = "";
+                    document.getElementById('binaryOutput').innerHTML = decToBin(num);
+                    document.getElementById('octOutput').innerHTML = decToOct(num);
+                    document.getElementById('hexOutput').innerHTML = decToHex(num);
+                }
             });
         </script>
 
