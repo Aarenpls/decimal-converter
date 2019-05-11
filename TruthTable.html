@@ -194,7 +194,7 @@
                 const booleanExp = document.getElementById('boolInput').value;
                 // allVars is a string of all the variable names (non-distinct)
                 const allVars = booleanExp
-                        .replace(/[\s+()&|!^01]/g, "")
+                        .replace(/[\s()&|!^01]/g, "")
                         .trim();
                 // vars[] contains only unique variable names
                 const uniqueVars = allVars
@@ -203,10 +203,10 @@
                         .sort();
                 // ops[] is an array of the variables without a proper logical operator between them
                 const ops = booleanExp
-                        .replace(/[\s+]/g, "")
-                        .replace(/[!-\/:-@[-`{-~]/g, " ")
-                        .split(/\s+/)
-                        .filter(x => x.length > 1);
+                        .replace(/[\s]/g, "")               // replace all white spaces with empty string
+                        .replace(/[!-\/:-@[-`{-~]/g, " ")   // replace all logical operators with a space
+                        .split(/\s+/)                       // split by  white spaces
+                        .filter(x => x.length > 1);         // find variables without an operator
                 const specialChar = new RegExp(/[!-\/:-@[-`{-~]/);
                 const otherNums = new RegExp(/[2-9]/);
                 // check if other numbers other than 0 and 1 are used
