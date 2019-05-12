@@ -266,7 +266,7 @@
                     document.getElementById('truthTable').innerHTML = "";
                     document.getElementById('errMsg').innerHTML = "Enter an expression!";
                 // check if there are too many variables used
-                } else if (uniqueVars.length > 4) {
+                } else if (uniqueVars.length > 5) {
                     document.getElementById('truthTable').innerHTML = "";
                     document.getElementById('errMsg').innerHTML = "Too many variables: " + uniqueVars.toString();
                 // js own syntax error
@@ -330,8 +330,43 @@
                                                                       "1101 | " + ans[13] + "</br>" +
                                                                       "1110 | " + ans[14] + "</br>" +
                                                                       "1111 | " + ans[15];
+                } else if (vars.length === 5) {
+                    ans = fiveVarSolver(booleanExp, vars);
+                    document.getElementById('truthTable').innerHTML = vars[0] + vars[1] + vars[2] + vars[3] + vars[4] + " | F" + "</br>" +
+                                                                      "<s>-------|---</s>" + "</br>" +
+                                                                      "00000 | " + ans[0] + "</br>" +
+                                                                      "00001 | " + ans[1] + "</br>" +
+                                                                      "00010 | " + ans[2] + "</br>" +
+                                                                      "00011 | " + ans[3] + "</br>" +
+                                                                      "00100 | " + ans[4] + "</br>" +
+                                                                      "00101 | " + ans[5] + "</br>" +
+                                                                      "00110 | " + ans[6] + "</br>" +
+                                                                      "00111 | " + ans[7] + "</br>" +
+                                                                      "01000 | " + ans[8] + "</br>" +
+                                                                      "01001 | " + ans[9] + "</br>" +
+                                                                      "01010 | " + ans[10] + "</br>" +
+                                                                      "01011 | " + ans[11] + "</br>" +
+                                                                      "01100 | " + ans[12] + "</br>" +
+                                                                      "01101 | " + ans[13] + "</br>" +
+                                                                      "01110 | " + ans[14] + "</br>" +
+                                                                      "01111 | " + ans[15] + "</br>" +
+                                                                      "10000 | " + ans[16] + "</br>" +
+                                                                      "10001 | " + ans[17] + "</br>" +
+                                                                      "10010 | " + ans[18] + "</br>" +
+                                                                      "10011 | " + ans[19] + "</br>" +
+                                                                      "10100 | " + ans[20] + "</br>" +
+                                                                      "10101 | " + ans[21] + "</br>" +
+                                                                      "10110 | " + ans[22] + "</br>" +
+                                                                      "10111 | " + ans[23] + "</br>" +
+                                                                      "11000 | " + ans[24] + "</br>" +
+                                                                      "11001 | " + ans[25] + "</br>" +
+                                                                      "11010 | " + ans[26] + "</br>" +
+                                                                      "11011 | " + ans[27] + "</br>" +
+                                                                      "11100 | " + ans[28] + "</br>" +
+                                                                      "11101 | " + ans[29] + "</br>" +
+                                                                      "11110 | " + ans[30] + "</br>" +
+                                                                      "11111 | " + ans[31];
                 }
-
             }
 
             function oneVarSolver(booleanExp, vars) {
@@ -399,6 +434,34 @@
                                         .replace(firstVar, i);
                                 // +0 is to convert back to 1 or 0 instead of boolean true/false
                                 ans.push(eval(currBool) + 0);
+                            }
+                        }
+                    }
+                }
+                return ans;
+            }
+
+            function fiveVarSolver(booleanExp, vars) {
+                const ans = [];
+                for (let i = 0; i < 2; i++) {
+                    const firstVar = new RegExp(vars[0], "g");
+                    for (let j = 0; j < 2; j++) {
+                        const secondVar = new RegExp(vars[1], "g");
+                        for (let k = 0; k < 2; k++) {
+                            const thirdVar = new RegExp(vars[2], "g");
+                            for (let l = 0; l < 2; l++) {
+                                const fourthVar = new RegExp(vars[3], "g");
+                                for (let m = 0; m < 2; m++) {
+                                    const fifthVar = new RegExp(vars[4], "g");
+                                    const currBool = booleanExp
+                                            .replace(fifthVar, m)
+                                            .replace(fourthVar, l)
+                                            .replace(thirdVar, k)
+                                            .replace(secondVar, j)
+                                            .replace(firstVar, i);
+                                    // +0 is to convert back to 1 or 0 instead of boolean true/false
+                                    ans.push(eval(currBool) + 0);
+                                }
                             }
                         }
                     }
