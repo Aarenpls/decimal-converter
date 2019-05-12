@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+        <style media="screen">
+            body {
+                background:#161616;
+                color:#efefef;
+            }
+
+            .container-fluid {
+                max-width: 750px;
+                margin-top: 50px;
+            }
+
+            .breadcrumb {
+                background: #2E2E2E;
+            }
+
+            #mipsInput {
+                font-family: consolas, monospace;
+                background: #1f1f1f;
+                color: #efefef;
+                border-color: #a5a5a5;
+            }
+
+            #table {
+                font-family: consolas, monospace;
+                color: #efefef;
+                text-align: center;
+                font-size: 23px;
+                line-height: 23px;
+            }
+
+            #binOutput, #hexOutput {
+                font-family: consolas, monospace;
+                color: #efefef;
+                text-align: right;
+                font-size: 23px;
+            }
+
+            #errMsg {
+                font-family: consolas, monospace;
+                text-align: center;
+                font-size: 20px;
+                color: #76B6FF;
+            }
+
+            #helpText {
+                font-size: 17px;
+            }
+
+            code {
+                font-family: consolas, monospace;
+                font-size: 18px;
+                color: #76B6FF;
+                font-weight: 400;
+            }
+
+            .nav-link {
+                color: #efefef;
+            }
+
+            .custom > li > a:hover {
+                color: #76b6ff;
+            }
+
+            th {
+                font-size: 18px;
+                font-weight: 400;
+                text-align: center;
+                color: #efefef;
+            }
+
+            #tableCode {
+                font-family: consolas, monospace;
+            }
+
+
+        </style>
+        <title>Mips Encoder</title>
+    </head>
+    <body>
+
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Mips Encoder</li>
+          </ol>
+        </nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-10 offset-md-1">
+                    <h1 class="display-4 text-center mb-5">Mips Encoder</h1>
+
+                    <form>
+                        <div class="form-row align-items-center mb-2">
+                            <div class="col-md-8">
+                                <input
+                                id="mipsInput"
+                                type="text"
+                                maxlength="40"
+                                title="Press help for syntax instructions"
+                                class="required form-control form-control-lg"
+                                placeholder="eg. add $s3, $t5, $s7"
+                                >
+                            </div>
+                            <div class="col-md-2">
+                                <button onclick="evalExp(); return false" class="btn btn-lg btn-success btn-block">Eval</button>
+                            </div>
+                            <div class="col-md-2">
+                                <a role="button" class="btn btn-dark btn-lg btn-block" data-toggle="collapse" aria-expanded="false" aria-controls="helpText" href="#helpText">Help</a>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="collapse" id="helpText">
+                        <div class="card bg-dark mb-2">
+                            <div class="card-body">
+                                Lorem ipsum
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark mb-2">
+                        <div class="card-body">
+                            <h4>Table:</h4>
+                            <div id="table">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-success mb-2">
+                        <div class="card-body">
+                            <h4>Binary:</h4>
+                            <div id="binOutput">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-danger mb-2">
+                        <div class="card-body">
+                            <h4>Hexadecimal:</h4>
+                            <div id="hexOutput">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            var refData = {
+                "add": {"format": "R", "opcode": 0x0, "funct": 0x20},
+                "addi": {"format": "I", "opcode": 0x8},
+                "addiu": {"format": "I", "opcode": 0x9},
+                "addu": {"format": "R", "opcode": 0x0, "funct": 0x21},
+                "and": {"format": "R", "opcode": 0x0, "funct": 0x24},
+                "andi": {"format": "I", "opcode": 0xC},
+                "beq": {"format": "I", "opcode": 0x4},
+                "bne": {"format": "I", "opcode": 0x5},
+                "j": {"format": "J", "opcode": 0x2},
+                "jal": {"format": "J", "opcode": 0x3},
+                "jr": {"format": "R", "opcode": 0x3, "funct": 0x08},
+                "lbu": {"format": "I", "opcode": 0x24},
+                "lhu": {"format": "I", "opcode": 0x25},
+                "ll": {"format": "I", "opcode": 0x30},
+                "lui": {"format": "I", "opcode": 0xF},
+                "lw": {"format": "I", "opcode": 0x23},
+                "nor": {"format": "R", "opcode": 0x0, "funct": 0x27},
+                "or": {"format": "R", "opcode": 0x0, "funct": 0x25},
+                "ori": {"format": "I", "opcode": 0xD},
+                "slt": {"format": "R", "opcode": 0x0, "funct": 0x2A},
+                "slti": {"format": "I", "opcode": 0xA},
+                "sltiu": {"format": "I", "opcode": 0xB},
+                "sltu": {"format": "R", "opcode": 0x0, "funct": 0x2B},
+                "sll": {"format": "R", "opcode": 0x0, "funct": 0x00},
+                "srl": {"format": "R", "opcode": 0x0, "funct": 0x02},
+                "sb": {"format": "I", "opcode": 0x28},
+                "sc": {"format": "I", "opcode": 0x38},
+                "sh": {"format": "I", "opcode": 0x29},
+                "sw": {"format": "I", "opcode": 0x2B},
+                "sub": {"format": "R", "opcode": 0x0, "funct": 0x22},
+                "subu": {"format": "R", "opcode": 0x0, "funct": 0x23}
+            }
+
+            var reg = {
+                "$zero": 0,
+                "$at": 1,
+                "$v0": 2,
+                "$v1": 3,
+                "$a0": 4,
+                "$a1": 5,
+                "$a2": 6,
+                "$a3": 7,
+                "$t0": 8,
+                "$t1": 9,
+                "$t2": 10,
+                "$t3": 11,
+                "$t4": 12,
+                "$t5": 13,
+                "$t6": 14,
+                "$t7": 15,
+                "$s0": 16,
+                "$s1": 17,
+                "$s2": 18,
+                "$s3": 19,
+                "$s4": 20,
+                "$s5": 21,
+                "$s6": 22,
+                "$s7": 23,
+                "$t8": 24,
+                "$t9": 25,
+                "$k0": 26,
+                "$k1": 27,
+                "$gp": 28,
+                "$sp": 29,
+                "$fp": 30,
+                "$ra": 31
+            }
+
+            function evalExp() {
+                const instruction = document.getElementById('mipsInput').value.toLowerCase();
+                const split = instruction
+                        .replace(/,/g, " ")
+                        .split(/\s+/);
+                let type;
+                for (const [key, value] of Object.entries(refData)) {
+                    if (key === split[0]) type = value;
+                }
+                console.log(type);
+                if (type.format === "R") {
+                    return RHandler(split, type);
+                }
+                else if (type.format === "I") {
+                    return IHandler(split, type);
+                } else {
+                    return JHandler(split, type);
+                }
+            }
+
+            function regFinder(r) {
+                for (const [key, value] of Object.entries(reg)) {
+                    if (key === r) return value;
+                }
+            }
+
+            function RHandler(split, type) {
+            // works for add, addu, and, nor, or, slt, sltu
+            // does not work for jr, sll, srl
+                const binOpcode = type
+                        .opcode
+                        .toString(2)
+                        .padStart(6, "0");
+
+                const binRd = regFinder(split[1])
+                        .toString(2)
+                        .padStart(5, "0");
+
+                const binRs = regFinder(split[2])
+                        .toString(2)
+                        .padStart(5, "0");
+
+                const binRt = regFinder(split[3])
+                        .toString(2)
+                        .padStart(5, "0");
+
+                const binShamt = "00000";
+
+                const binFunct = type
+                        .funct
+                        .toString(2)
+                        .padStart(6, "0");
+
+                const binEncoding = binOpcode + binRs + binRt + binRd + binShamt + binFunct;
+                const hexEncoding = parseInt(binEncoding, 2).toString(16).padStart(8, "0").toUpperCase();
+                document.getElementById('binOutput').innerHTML = binEncoding;
+                document.getElementById('hexOutput').innerHTML = hexEncoding;
+            }
+
+            function IHandler(split, type) {
+            // 
+                const binOpcode = type
+                        .opcode
+                        .toString(2)
+                        .padStart(6, "0");
+
+                const binRt = regFinder(split[1])
+                        .toString(2)
+                        .padStart(5, "0");
+
+                const binRs = regFinder(split[2])
+                        .toString(2)
+                        .padStart(5, "0");
+
+                const binImm = split[3].includes("x") || split[3].includes("X") ?
+                        parseInt(split[3], 16).toString(2).padStart(16, "0") :
+                        parseInt(split[3], 10).toString(2).padStart(16, "0");
+
+                const binEncoding = binOpcode + binRs + binRt + binImm;
+                const hexEncoding = parseInt(binEncoding, 2).toString(16).padStart(8, "0").toUpperCase();
+                document.getElementById('binOutput').innerHTML = binEncoding;
+                document.getElementById('hexOutput').innerHTML = hexEncoding;
+            }
+
+            function JHandler(split, type) {
+            // works for add, addu, and, nor, or, slt, sltu
+            // does not work for jr, sll, srl
+                const binOpcode = type
+                        .opcode
+                        .toString(2)
+                        .padStart(6, "0");
+
+                const binRd = regFinder(split[1])
+                        .toString(2)
+                        .padStart(5, "0");
+
+                const binRs = regFinder(split[2])
+                        .toString(2)
+                        .padStart(5, "0");
+
+                const binRt = regFinder(split[3])
+                        .toString(2)
+                        .padStart(5, "0");
+
+                const binShamt = "00000";
+
+                const binFunct = type
+                        .funct
+                        .toString(2)
+                        .padStart(6, "0");
+
+                const binEncoding = binOpcode + binRs + binRt + binRd + binShamt + binFunct;
+                const hexEncoding = parseInt(binEncoding, 2).toString(16).padStart(8, "0").toUpperCase();
+                document.getElementById('binOutput').innerHTML = binEncoding;
+                document.getElementById('hexOutput').innerHTML = hexEncoding;
+
+                console.log(binEncoding);
+                console.log(hexEncoding);
+            }
+        </script>
+    </body>
+</html>
