@@ -125,7 +125,7 @@
                             <div class="card-body">
                                 <p>Only contains instructions from the first half of this <a href="https://www.comp.nus.edu.sg/~cs2100/lect/MIPS_Reference_Data_page1.pdf" class="text-info">MIPS Reference Data</a> that is in the CS2100 syllabus.</p>
                                 <p>For branch and jump instructions, use the actual immediate field.</p>
-                                <p>Both decimal or hexadecimal numbers can be used for the immediate field. Numbers appended with "0x" will be parsed as hexadacimal numbers.</p>
+                                <p>Both decimal and hexadecimal numbers can be used for the immediate field. Numbers appended with "0x" will be treated as hexadacimal numbers, otherwise, they will be treated as decimal numbers.</p>
                             </div>
                         </div>
                     </div>
@@ -200,38 +200,19 @@
             }
 
             const reg = {
-                "$zero": 0,
-                "$at": 1,
-                "$v0": 2,
-                "$v1": 3,
-                "$a0": 4,
-                "$a1": 5,
-                "$a2": 6,
-                "$a3": 7,
-                "$t0": 8,
-                "$t1": 9,
-                "$t2": 10,
-                "$t3": 11,
-                "$t4": 12,
-                "$t5": 13,
-                "$t6": 14,
-                "$t7": 15,
-                "$s0": 16,
-                "$s1": 17,
-                "$s2": 18,
-                "$s3": 19,
-                "$s4": 20,
-                "$s5": 21,
-                "$s6": 22,
-                "$s7": 23,
-                "$t8": 24,
-                "$t9": 25,
-                "$k0": 26,
-                "$k1": 27,
-                "$gp": 28,
-                "$sp": 29,
-                "$fp": 30,
-                "$ra": 31
+                "$zero": 0, "$at": 1, "$v0": 2, "$v1": 3, "$a0": 4,
+                "$a1": 5, "$a2": 6, "$a3": 7, "$t0": 8, "$t1": 9,
+                "$t2": 10, "$t3": 11, "$t4": 12, "$t5": 13, "$t6": 14,
+                "$t7": 15, "$s0": 16, "$s1": 17, "$s2": 18, "$s3": 19,
+                "$s4": 20, "$s5": 21, "$s6": 22, "$s7": 23, "$t8": 24,
+                "$t9": 25, "$k0": 26, "$k1": 27, "$gp": 28, "$sp": 29,
+                "$fp": 30, "$ra": 31, "$0": 0, "$1": 1, "$2": 2,
+                "$3": 3, "$4": 4, "$5": 5, "$6": 6, "$7": 7,
+                "$8": 8, "$9": 9, "$10": 10, "$11": 11, "$12": 12,
+                "$13": 14, "$14": 14, "$15": 15, "$16": 16, "$17": 17,
+                "$18": 18, "$19": 19, "$20": 20, "$21": 21, "$22": 22,
+                "$23": 23, "$24": 24, "$25": 25, "$26": 26, "$27": 27,
+                "$28": 28, "$29": 29, "$30": 30, "$31": 31
             }
 
             function evalExp() {
@@ -328,7 +309,8 @@
                         .toUpperCase();
 
                 document.getElementById('working').innerHTML =
-                        "op: " + split[0] + " = " + binOpcode +
+                        "<u>R-format</u>" +
+                        "</br>" + "op: " + split[0] + " = " + binOpcode +
                         "</br>" + "rs: $zero" + " = " + binRs +
                         "</br>" + "rt: " + split[2] + " = " + binRt +
                         "</br>" + "rd: " + split[1] + " = " + binRd +
@@ -357,7 +339,8 @@
                         .toUpperCase();
 
                 document.getElementById('working').innerHTML =
-                        "op: " + split[0] + " = " + binOpcode +
+                        "<u>R-format</u>" +
+                        "</br>" + "op: " + split[0] + " = " + binOpcode +
                         "</br>" + "rs: " + split[1] + " = " + binRs +
                         "</br>" + "rt: $zero" + " = " + binRt +
                         "</br>" + "rd: $zero" + " = " + binRd +
@@ -401,7 +384,8 @@
                         .toUpperCase();
 
                 document.getElementById('working').innerHTML =
-                        "op: " + split[0] + " = " + binOpcode +
+                        "<u>R-format</u>" +
+                        "</br>" + "op: " + split[0] + " = " + binOpcode +
                         "</br>" + "rs: " + split[2] + " = " + binRs +
                         "</br>" + "rt: " + split[3] + " = " + binRt +
                         "</br>" + "rd: " + split[1] + " = " + binRd +
@@ -438,7 +422,8 @@
                         .toUpperCase();
 
                 document.getElementById('working').innerHTML =
-                        "op: " + split[0] + " = " + binOpcode +
+                        "<u>I-format</u>" +
+                        "</br>" + "op: " + split[0] + " = " + binOpcode +
                         "</br>" + "rs: " + split[1] + " = " + binRs +
                         "</br>" + "rt: " + split[2] + " = " + binRt +
                         "</br>" + "imm: " + split[3] + " = " + binImm;
@@ -481,7 +466,8 @@
                         .toUpperCase();
 
                 document.getElementById('working').innerHTML =
-                        "op: " + split[0] + " = " + binOpcode +
+                        "<u>I-format</u>" +
+                        "</br>" + "op: " + split[0] + " = " + binOpcode +
                         "</br>" + "rs: " + rs + " = " + binRs +
                         "</br>" + "rt: " + split[1] + " = " + binRt +
                         "</br>" + "offset: " + offset + " = " + binOffset;
@@ -518,7 +504,8 @@
                         .toUpperCase();
 
                 document.getElementById('working').innerHTML =
-                        "op: " + split[0] + " = " + binOpcode +
+                        "<u>I-format</u>" +
+                        "</br>" + "op: " + split[0] + " = " + binOpcode +
                         "</br>" + "rt: " + split[1] + " = " + binRs +
                         "</br>" + "rs: " + split[2] + " = " + binRt +
                         "</br>" + "imm: " + split[3] + " = " + binImm;
@@ -528,7 +515,7 @@
             }
 
             function JHandler(split, type) {
-                if (isNaN(split[1])) throw "immediate field is not a valid number: " + split[1];
+                if (isNaN(split[1]) || split[1] === undefined) throw "immediate field is not a valid number: " + split[1];
 
                 const binOpcode = type
                         .opcode
@@ -545,8 +532,9 @@
                         .padStart(8, "0")
                         .toUpperCase();
 
-                document.getElementById('working').innerHTML =
-                        "op: " + split[0] + " = " + binOpcode +
+                document.getElementById('working').innerHTML
+                        "<u>J-format</u>" +
+                        "</br>" + "op: " + split[0] + " = " + binOpcode +
                         "</br>" + "imm: " + split[1] + " = " + binImm;
                 document.getElementById('binOutput').innerHTML = formatOutput(binEncoding);
                 document.getElementById('hexOutput').innerHTML = "0x" + formatOutput(hexEncoding);
