@@ -126,7 +126,6 @@
                             <div class="card-body">
                                 Lorem ipsum
                             </div>
-
                         </div>
                     </div>
 
@@ -162,7 +161,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script type="text/javascript">
-            var refData = {
+            const refData = {
                 "add": {"format": "R", "opcode": 0x0, "funct": 0x20},
                 "addi": {"format": "I", "opcode": 0x8},
                 "addiu": {"format": "I", "opcode": 0x9},
@@ -196,7 +195,7 @@
                 "subu": {"format": "R", "opcode": 0x0, "funct": 0x23}
             }
 
-            var reg = {
+            const reg = {
                 "$zero": 0,
                 "$at": 1,
                 "$v0": 2,
@@ -285,13 +284,18 @@
                         .padStart(6, "0");
 
                 const binEncoding = binOpcode + binRs + binRt + binRd + binShamt + binFunct;
-                const hexEncoding = parseInt(binEncoding, 2).toString(16).padStart(8, "0").toUpperCase();
+                const hexEncoding = parseInt(binEncoding, 2)
+                        .toString(16)
+                        .padStart(8, "0")
+                        .toUpperCase();
                 document.getElementById('binOutput').innerHTML = binEncoding;
                 document.getElementById('hexOutput').innerHTML = hexEncoding;
             }
 
             function IHandler(split, type) {
-            // 
+            // works for addi, addiu, andi, ori, slti, sltiu
+            // does not work for beq, bne
+            // not work for lb, lui, lw, sb, sw
                 const binOpcode = type
                         .opcode
                         .toString(2)
@@ -310,7 +314,10 @@
                         parseInt(split[3], 10).toString(2).padStart(16, "0");
 
                 const binEncoding = binOpcode + binRs + binRt + binImm;
-                const hexEncoding = parseInt(binEncoding, 2).toString(16).padStart(8, "0").toUpperCase();
+                const hexEncoding = parseInt(binEncoding, 2)
+                        .toString(16)
+                        .padStart(8, "0")
+                        .toUpperCase();
                 document.getElementById('binOutput').innerHTML = binEncoding;
                 document.getElementById('hexOutput').innerHTML = hexEncoding;
             }
