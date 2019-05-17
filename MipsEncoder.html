@@ -231,20 +231,34 @@
             }
 
             function evalExp() {
-                const instruction = document.getElementById('mipsInput').value.toLowerCase();
-                const split = instruction
+                const userInput = document.getElementById('mipsInput').value.toLowerCase();
+                const split = userInput
                         .replace(/,/g, " ")
                         .split(/\s+/);
-                let type;
+                const instruction = split[0];
+                
+                let type; // type is the object which describes the instruction eg. {"format": "R", "opcode": 0x0, "funct": 0x20}
                 for (const [key, value] of Object.entries(refData)) {
-                    if (key === split[0]) type = value;
+                    if (key === instruction) type = value;
                 }
-                console.log(type);
+
                 if (type.format === "R") {
-                    return RHandler(split, type);
-                }
-                else if (type.format === "I") {
-                    return IHandler(split, type);
+                    if (instruction === "sll" || instruction === "srl") {
+                        return RshiftHandler(split, type);
+                    } else if (instruction === "jr") {
+                        return jrHandler(split, type);
+                    } else {
+                        return RHandler(split, type);
+                    }
+                } else if (type.format === "I") {
+                    if (instruction === "beq" || instruction === "bne") {
+                        return IbranchHandler(split, type);
+                    } else if (instruction === "lb" || instruction === "lui" || instruction === "sw"
+                            || instruction === "lw" || instruction === "sb") {
+                        return IloadHandler(split, type);
+                    } else {
+                        return IHandler(split, type);
+                    }
                 } else {
                     return JHandler(split, type);
                 }
@@ -256,9 +270,61 @@
                 }
             }
 
+            function RshiftHandler(split, type) {
+                const binOpcode = type
+                        .opcode
+                        .toString(2)
+                        .padStart(6, "0");
+
+                const binRd = regFinder(split[1])
+                        .toString(2)
+                        .padStart(5, "0");
+
+                const binRs = "00000"; // assumed to be 0x0
+
+                const binRt = regFinder(split[2])
+                        .toString(2)
+                        .padStart(5, "0");
+
+                const binShamt = split[3].includes("x") || split[3].includes("X") ?
+                        parseInt(split[3], 16).toString(2).padStart(5, "0") :
+                        parseInt(split[3], 10).toString(2).padStart(5, "0");
+
+                const binFunct = split[0] === "sll" ? "000000" : "000010";
+
+                const binEncoding = binOpcode + binRs + binRt + binRd + binShamt + binFunct;
+                const hexEncoding = parseInt(binEncoding, 2)
+                        .toString(16)
+                        .padStart(8, "0")
+                        .toUpperCase();
+
+                document.getElementById('binOutput').innerHTML = binEncoding;
+                document.getElementById('hexOutput').innerHTML = hexEncoding;
+            }
+
+            function jrHandler(split, type) {
+                const binOpcode = "000000";
+
+                const binRs = regFinder(split[1])
+                        .toString(2)
+                        .padStart(5, "0");
+
+                const binRt = binRd = binShamt = "00000";
+
+                const binFunct = "001000";
+
+                const binEncoding = binOpcode + binRs + binRt + binRd + binShamt + binFunct;
+                const hexEncoding = parseInt(binEncoding, 2)
+                        .toString(16)
+                        .padStart(8, "0")
+                        .toUpperCase();
+
+                document.getElementById('binOutput').innerHTML = binEncoding;
+                document.getElementById('hexOutput').innerHTML = hexEncoding;
+            }
+
             function RHandler(split, type) {
-            // works for add, addu, and, nor, or, slt, sltu
-            // does not work for jr, sll, srl
+            // works for add, addu, and, nor, or, slt, sltu, sll, srl, jr
                 const binOpcode = type
                         .opcode
                         .toString(2)
@@ -288,14 +354,77 @@
                         .toString(16)
                         .padStart(8, "0")
                         .toUpperCase();
+
+                document.getElementById('binOutput').innerHTML = binEncoding;
+                document.getElementById('hexOutput').innerHTML = hexEncoding;
+            }
+
+            function IbranchHandler(split, type) {
+                const binOpcode = type
+                        .opcode
+                        .toString(2)
+                        .padStart(6, "0");
+
+                const binRs = regFinder(split[1])
+                        .toString(2)
+                        .padStart(5, "0");
+
+                const binRt = regFinder(split[2])
+                        .toString(2)
+                        .padStart(5, "0");
+
+                const binImm = split[3].includes("x") || split[3].includes("X") ?
+                        parseInt(split[3], 16).toString(2).padStart(16, "0") :
+                        parseInt(split[3], 10).toString(2).padStart(16, "0");
+
+                const binEncoding = binOpcode + binRs + binRt + binImm;
+                const hexEncoding = parseInt(binEncoding, 2)
+                        .toString(16)
+                        .padStart(8, "0")
+                        .toUpperCase();
+
+                document.getElementById('binOutput').innerHTML = binEncoding;
+                document.getElementById('hexOutput').innerHTML = hexEncoding;
+            }
+
+            function IloadHandler(split, type) {
+                const splitOfSplit = split[2]
+                        .replace(/[()]/g, " ")
+                        .trim()
+                        .split(/\s+/);
+
+                const offset = splitOfSplit[0];
+                const rs = split[0] === "lui" ? "$zero" : splitOfSplit[1];
+
+                const binOpcode = type
+                        .opcode
+                        .toString(2)
+                        .padStart(6, "0");
+
+                const binRt = regFinder(split[1])
+                        .toString(2)
+                        .padStart(5, "0");
+
+                const binRs = regFinder(rs)
+                        .toString(2)
+                        .padStart(5, "0");
+
+                const binOffset = offset.includes("x") || offset.includes("X") ?
+                        parseInt(offset, 16).toString(2).padStart(16, "0") :
+                        parseInt(offset, 10).toString(2).padStart(16, "0");
+
+                const binEncoding = binOpcode + binRs + binRt + binOffset;
+                const hexEncoding = parseInt(binEncoding, 2)
+                        .toString(16)
+                        .padStart(8, "0")
+                        .toUpperCase();
+
                 document.getElementById('binOutput').innerHTML = binEncoding;
                 document.getElementById('hexOutput').innerHTML = hexEncoding;
             }
 
             function IHandler(split, type) {
-            // works for addi, addiu, andi, ori, slti, sltiu
-            // does not work for beq, bne
-            // not work for lb, lui, lw, sb, sw
+            // works for addi, addiu, andi, ori, slti, sltiu, beq, bne, lb, lui, lw, sb, sw
                 const binOpcode = type
                         .opcode
                         .toString(2)
@@ -318,38 +447,22 @@
                         .toString(16)
                         .padStart(8, "0")
                         .toUpperCase();
+
                 document.getElementById('binOutput').innerHTML = binEncoding;
                 document.getElementById('hexOutput').innerHTML = hexEncoding;
             }
 
             function JHandler(split, type) {
-            // works for add, addu, and, nor, or, slt, sltu
-            // does not work for jr, sll, srl
                 const binOpcode = type
                         .opcode
                         .toString(2)
                         .padStart(6, "0");
 
-                const binRd = regFinder(split[1])
-                        .toString(2)
-                        .padStart(5, "0");
+                const binImm = split[1].includes("x") || split[1].includes("X") ?
+                        parseInt(split[1], 16).toString(2).padStart(26, "0") :
+                        parseInt(split[1], 10).toString(2).padStart(26, "0");
 
-                const binRs = regFinder(split[2])
-                        .toString(2)
-                        .padStart(5, "0");
-
-                const binRt = regFinder(split[3])
-                        .toString(2)
-                        .padStart(5, "0");
-
-                const binShamt = "00000";
-
-                const binFunct = type
-                        .funct
-                        .toString(2)
-                        .padStart(6, "0");
-
-                const binEncoding = binOpcode + binRs + binRt + binRd + binShamt + binFunct;
+                const binEncoding = binOpcode + binImm;
                 const hexEncoding = parseInt(binEncoding, 2).toString(16).padStart(8, "0").toUpperCase();
                 document.getElementById('binOutput').innerHTML = binEncoding;
                 document.getElementById('hexOutput').innerHTML = hexEncoding;
@@ -357,6 +470,7 @@
                 console.log(binEncoding);
                 console.log(hexEncoding);
             }
+
         </script>
     </body>
 </html>
