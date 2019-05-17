@@ -30,19 +30,19 @@
                 border-color: #a5a5a5;
             }
 
-            #table {
-                font-family: consolas, monospace;
-                color: #efefef;
-                text-align: center;
-                font-size: 23px;
-                line-height: 23px;
-            }
-
             #binOutput, #hexOutput {
                 font-family: consolas, monospace;
                 color: #efefef;
                 text-align: right;
                 font-size: 23px;
+            }
+
+            #working {
+                font-family: consolas, monospace;
+                color: #efefef;
+                text-align: left;
+                display: inline-block;
+                font-size: 20px;
             }
 
             #errMsg {
@@ -78,27 +78,23 @@
                 color: #efefef;
             }
 
-            #tableCode {
-                font-family: consolas, monospace;
-            }
-
 
         </style>
-        <title>Mips Encoder</title>
+        <title>MIPS Encoder</title>
     </head>
     <body>
 
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Mips Encoder</li>
+            <li class="breadcrumb-item active" aria-current="page">MIPS Encoder</li>
           </ol>
         </nav>
 
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-10 offset-md-1">
-                    <h1 class="display-4 text-center mb-5">Mips Encoder</h1>
+                    <h1 class="display-4 text-center mb-5">MIPS Encoder</h1>
 
                     <form>
                         <div class="form-row align-items-center mb-2">
@@ -113,7 +109,7 @@
                                 >
                             </div>
                             <div class="col-md-2">
-                                <button onclick="evalExp(); return false" class="btn btn-lg btn-success btn-block">Eval</button>
+                                <button onclick="evalExp(); return false" class="btn btn-lg btn-success btn-block">Encode</button>
                             </div>
                             <div class="col-md-2">
                                 <a role="button" class="btn btn-dark btn-lg btn-block" data-toggle="collapse" aria-expanded="false" aria-controls="helpText" href="#helpText">Help</a>
@@ -121,26 +117,15 @@
                         </div>
                     </form>
 
+                    <div class="mb-2" id="errMsg">
+                    </div>
+
                     <div class="collapse" id="helpText">
                         <div class="card bg-dark mb-2">
                             <div class="card-body">
-                                Lorem ipsum
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card bg-dark mb-2">
-                        <div class="card-body">
-                            <h4>Table:</h4>
-                            <div id="table">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card bg-success mb-2">
-                        <div class="card-body">
-                            <h4>Binary:</h4>
-                            <div id="binOutput">
+                                <p>Only contains instructions from the first half of this <a href="https://www.comp.nus.edu.sg/~cs2100/lect/MIPS_Reference_Data_page1.pdf" class="text-info">MIPS Reference Data</a> that is in the CS2100 syllabus.</p>
+                                <p>For branch and jump instructions, use the actual immediate field.</p>
+                                <p>Both decimal or hexadecimal numbers can be used for the immediate field. Numbers appended with "0x" will be parsed as hexadacimal numbers.</p>
                             </div>
                         </div>
                     </div>
@@ -148,7 +133,25 @@
                     <div class="card bg-danger mb-2">
                         <div class="card-body">
                             <h4>Hexadecimal:</h4>
-                            <div id="hexOutput">
+                            <div id="hexOutput">-
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-primary mb-2">
+                        <div class="card-body">
+                            <h4>Binary:</h4>
+                            <div id="binOutput">-
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark mb-2">
+                        <div class="card-body">
+                            <h4>Working:</h4>
+                            <div style="text-align: center;">
+                                <div id="working">-
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -173,6 +176,7 @@
                 "j": {"format": "J", "opcode": 0x2},
                 "jal": {"format": "J", "opcode": 0x3},
                 "jr": {"format": "R", "opcode": 0x3, "funct": 0x08},
+                "lb": {"format": "I", "opcode": 0x20},
                 "lbu": {"format": "I", "opcode": 0x24},
                 "lhu": {"format": "I", "opcode": 0x25},
                 "ll": {"format": "I", "opcode": 0x30},
@@ -236,41 +240,66 @@
                         .replace(/,/g, " ")
                         .split(/\s+/);
                 const instruction = split[0];
-                
-                let type; // type is the object which describes the instruction eg. {"format": "R", "opcode": 0x0, "funct": 0x20}
-                for (const [key, value] of Object.entries(refData)) {
-                    if (key === instruction) type = value;
-                }
 
-                if (type.format === "R") {
-                    if (instruction === "sll" || instruction === "srl") {
-                        return RshiftHandler(split, type);
-                    } else if (instruction === "jr") {
-                        return jrHandler(split, type);
-                    } else {
-                        return RHandler(split, type);
+                try {
+                    let type; // type is the object which describes the instruction eg. {"format": "R", "opcode": 0x0, "funct": 0x20}
+                    for (const [key, value] of Object.entries(refData)) {
+                        if (key === instruction) type = value;
                     }
-                } else if (type.format === "I") {
-                    if (instruction === "beq" || instruction === "bne") {
-                        return IbranchHandler(split, type);
-                    } else if (instruction === "lb" || instruction === "lui" || instruction === "sw"
-                            || instruction === "lw" || instruction === "sb") {
-                        return IloadHandler(split, type);
+                    if (type === undefined) throw "Instruction not found: " + instruction;
+
+                    if (type.format === "R") {
+                        if (instruction === "sll" || instruction === "srl") {
+                            return RshiftHandler(split, type);
+                        } else if (instruction === "jr") {
+                            return jrHandler(split, type);
+                        } else {
+                            return RHandler(split, type);
+                        }
+                    } else if (type.format === "I") {
+                        if (instruction === "beq" || instruction === "bne") {
+                            return IbranchHandler(split, type);
+                        } else if (instruction === "lb" || instruction === "lui" || instruction === "sw"
+                                || instruction === "lw" || instruction === "sb" || instruction == "lbu") {
+                            return IloadHandler(split, type);
+                        } else {
+                            return IHandler(split, type);
+                        }
                     } else {
-                        return IHandler(split, type);
+                        return JHandler(split, type);
                     }
-                } else {
-                    return JHandler(split, type);
+                }
+                catch (err) {
+                    document.getElementById('working').innerHTML = "-";
+                    document.getElementById('binOutput').innerHTML = "-";
+                    document.getElementById('hexOutput').innerHTML = "-";
+                    document.getElementById('errMsg').innerHTML = err;
                 }
             }
 
             function regFinder(r) {
+                let regFound;
                 for (const [key, value] of Object.entries(reg)) {
-                    if (key === r) return value;
+                    if (key === r) regFound = value;
+                }
+                if (regFound === undefined) {
+                    throw "Register not found: " + r;
+                } else {
+                    return regFound;
                 }
             }
 
+            function formatOutput(str) {
+                let toReturn = str.slice(0, str.length % 4);
+                for (let i = str.length % 4; i < str.length; i = i + 4) {
+                    toReturn = toReturn + " " + str.slice(i, i + 4);
+                }
+                return toReturn.trim();
+            }
+
             function RshiftHandler(split, type) {
+                if (isNaN(split[3])) throw "shamt field is not a valid number: " + split[3];
+
                 const binOpcode = type
                         .opcode
                         .toString(2)
@@ -298,8 +327,16 @@
                         .padStart(8, "0")
                         .toUpperCase();
 
-                document.getElementById('binOutput').innerHTML = binEncoding;
-                document.getElementById('hexOutput').innerHTML = hexEncoding;
+                document.getElementById('working').innerHTML =
+                        "op: " + split[0] + " = " + binOpcode +
+                        "</br>" + "rs: $zero" + " = " + binRs +
+                        "</br>" + "rt: " + split[2] + " = " + binRt +
+                        "</br>" + "rd: " + split[1] + " = " + binRd +
+                        "</br>" + "shamt: " + split[3] + " = " + binShamt +
+                        "</br>" + "funct: " + binFunct;
+                document.getElementById('binOutput').innerHTML = formatOutput(binEncoding);
+                document.getElementById('hexOutput').innerHTML = "0x" + formatOutput(hexEncoding);
+                document.getElementById('errMsg').innerHTML = "";
             }
 
             function jrHandler(split, type) {
@@ -319,8 +356,16 @@
                         .padStart(8, "0")
                         .toUpperCase();
 
-                document.getElementById('binOutput').innerHTML = binEncoding;
-                document.getElementById('hexOutput').innerHTML = hexEncoding;
+                document.getElementById('working').innerHTML =
+                        "op: " + split[0] + " = " + binOpcode +
+                        "</br>" + "rs: " + split[1] + " = " + binRs +
+                        "</br>" + "rt: $zero" + " = " + binRt +
+                        "</br>" + "rd: $zero" + " = " + binRd +
+                        "</br>" + "shamt: " + binShamt +
+                        "</br>" + "funct: " + binFunct;
+                document.getElementById('binOutput').innerHTML = formatOutput(binEncoding);
+                document.getElementById('hexOutput').innerHTML = "0x" + formatOutput(hexEncoding);
+                document.getElementById('errMsg').innerHTML = "";
             }
 
             function RHandler(split, type) {
@@ -355,11 +400,20 @@
                         .padStart(8, "0")
                         .toUpperCase();
 
-                document.getElementById('binOutput').innerHTML = binEncoding;
-                document.getElementById('hexOutput').innerHTML = hexEncoding;
+                document.getElementById('working').innerHTML =
+                        "op: " + split[0] + " = " + binOpcode +
+                        "</br>" + "rs: " + split[2] + " = " + binRs +
+                        "</br>" + "rt: " + split[3] + " = " + binRt +
+                        "</br>" + "rd: " + split[1] + " = " + binRd +
+                        "</br>" + "shamt: " + binShamt +
+                        "</br>" + "funct: " + binFunct;
+                document.getElementById('binOutput').innerHTML = formatOutput(binEncoding);
+                document.getElementById('hexOutput').innerHTML = "0x" + formatOutput(hexEncoding);
+                document.getElementById('errMsg').innerHTML = "";
             }
 
             function IbranchHandler(split, type) {
+                if (isNaN(split[3])) throw "immediate field is not a valid number: " + split[3];
                 const binOpcode = type
                         .opcode
                         .toString(2)
@@ -383,8 +437,14 @@
                         .padStart(8, "0")
                         .toUpperCase();
 
-                document.getElementById('binOutput').innerHTML = binEncoding;
-                document.getElementById('hexOutput').innerHTML = hexEncoding;
+                document.getElementById('working').innerHTML =
+                        "op: " + split[0] + " = " + binOpcode +
+                        "</br>" + "rs: " + split[1] + " = " + binRs +
+                        "</br>" + "rt: " + split[2] + " = " + binRt +
+                        "</br>" + "imm: " + split[3] + " = " + binImm;
+                document.getElementById('binOutput').innerHTML = formatOutput(binEncoding);
+                document.getElementById('hexOutput').innerHTML = "0x" + formatOutput(hexEncoding);
+                document.getElementById('errMsg').innerHTML = "";
             }
 
             function IloadHandler(split, type) {
@@ -395,6 +455,7 @@
 
                 const offset = splitOfSplit[0];
                 const rs = split[0] === "lui" ? "$zero" : splitOfSplit[1];
+                if (isNaN(offset)) throw "offset field is not a valid number: " + offset;
 
                 const binOpcode = type
                         .opcode
@@ -419,12 +480,20 @@
                         .padStart(8, "0")
                         .toUpperCase();
 
-                document.getElementById('binOutput').innerHTML = binEncoding;
-                document.getElementById('hexOutput').innerHTML = hexEncoding;
+                document.getElementById('working').innerHTML =
+                        "op: " + split[0] + " = " + binOpcode +
+                        "</br>" + "rs: " + rs + " = " + binRs +
+                        "</br>" + "rt: " + split[1] + " = " + binRt +
+                        "</br>" + "offset: " + offset + " = " + binOffset;
+                document.getElementById('binOutput').innerHTML = formatOutput(binEncoding);
+                document.getElementById('hexOutput').innerHTML = "0x" + formatOutput(hexEncoding);
+                document.getElementById('errMsg').innerHTML = "";
             }
 
             function IHandler(split, type) {
             // works for addi, addiu, andi, ori, slti, sltiu, beq, bne, lb, lui, lw, sb, sw
+                if (isNaN(split[3])) throw "offset field is not a valid number: " + split[3];
+
                 const binOpcode = type
                         .opcode
                         .toString(2)
@@ -448,11 +517,19 @@
                         .padStart(8, "0")
                         .toUpperCase();
 
-                document.getElementById('binOutput').innerHTML = binEncoding;
-                document.getElementById('hexOutput').innerHTML = hexEncoding;
+                document.getElementById('working').innerHTML =
+                        "op: " + split[0] + " = " + binOpcode +
+                        "</br>" + "rt: " + split[1] + " = " + binRs +
+                        "</br>" + "rs: " + split[2] + " = " + binRt +
+                        "</br>" + "imm: " + split[3] + " = " + binImm;
+                document.getElementById('binOutput').innerHTML = formatOutput(binEncoding);
+                document.getElementById('hexOutput').innerHTML = "0x" + formatOutput(hexEncoding);
+                document.getElementById('errMsg').innerHTML = "";
             }
 
             function JHandler(split, type) {
+                if (isNaN(split[1])) throw "immediate field is not a valid number: " + split[1];
+
                 const binOpcode = type
                         .opcode
                         .toString(2)
@@ -463,12 +540,17 @@
                         parseInt(split[1], 10).toString(2).padStart(26, "0");
 
                 const binEncoding = binOpcode + binImm;
-                const hexEncoding = parseInt(binEncoding, 2).toString(16).padStart(8, "0").toUpperCase();
-                document.getElementById('binOutput').innerHTML = binEncoding;
-                document.getElementById('hexOutput').innerHTML = hexEncoding;
+                const hexEncoding = parseInt(binEncoding, 2)
+                        .toString(16)
+                        .padStart(8, "0")
+                        .toUpperCase();
 
-                console.log(binEncoding);
-                console.log(hexEncoding);
+                document.getElementById('working').innerHTML =
+                        "op: " + split[0] + " = " + binOpcode +
+                        "</br>" + "imm: " + split[1] + " = " + binImm;
+                document.getElementById('binOutput').innerHTML = formatOutput(binEncoding);
+                document.getElementById('hexOutput').innerHTML = "0x" + formatOutput(hexEncoding);
+                document.getElementById('errMsg').innerHTML = "";
             }
 
         </script>
