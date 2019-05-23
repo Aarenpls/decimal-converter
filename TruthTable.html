@@ -281,27 +281,37 @@
                 }
             }
 
+            function printMinterms(ans) {
+                let minterms = [];
+                for (let i = 0; i < ans.length; i++) {
+                    if (ans[i] === 1) minterms.push(i);
+                }
+                return minterms;
+            }
+
             // evaluates the expression
             function evalExp(booleanExp, vars) {
                 let ans;
                 if (vars.length === 1) {
                     ans = oneVarSolver(booleanExp, vars);
                     document.getElementById('truthTable').innerHTML = vars[0] + " | F" + "</br>" +
-                                                                      "<s>---|---</s>" + "</br>" +
+                                                                      "<s>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</s>" + "</br>" +
                                                                       "0 | " + ans[0] + "</br>" +
-                                                                      "1 | " + ans[1];
+                                                                      "1 | " + ans[1] + "</br></br>" +
+                                                                      "F(" + vars + ") = Σm(" + printMinterms(ans) + ")";
                 } else if (vars.length === 2) {
                     ans = twoVarSolver(booleanExp, vars);
                     document.getElementById('truthTable').innerHTML = vars[0] + vars[1] + " | F" + "</br>" +
-                                                                      "<s>----|---</s>" + "</br>" +
+                                                                      "<s>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</s>" + "</br>" +
                                                                       "00 | " + ans[0] + "</br>" +
                                                                       "01 | " + ans[1] + "</br>" +
                                                                       "10 | " + ans[2] + "</br>" +
-                                                                      "11 | " + ans[3];
+                                                                      "11 | " + ans[3] + "</br></br>" +
+                                                                      "F(" + vars + ") = Σm(" + printMinterms(ans) + ")";
                 } else if (vars.length === 3) {
                     ans = threeVarSolver(booleanExp, vars);
                     document.getElementById('truthTable').innerHTML = vars[0] + vars[1] + vars[2] + " | F" + "</br>" +
-                                                                      "<s>-----|---</s>" + "</br>" +
+                                                                      "<s>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</s>" + "</br>" +
                                                                       "000 | " + ans[0] + "</br>" +
                                                                       "001 | " + ans[1] + "</br>" +
                                                                       "010 | " + ans[2] + "</br>" +
@@ -309,11 +319,12 @@
                                                                       "100 | " + ans[4] + "</br>" +
                                                                       "101 | " + ans[5] + "</br>" +
                                                                       "110 | " + ans[6] + "</br>" +
-                                                                      "111 | " + ans[7];
+                                                                      "111 | " + ans[7] + "</br></br>" +
+                                                                      "F(" + vars + ") = Σm(" + printMinterms(ans) + ")";
                 } else if (vars.length === 4) {
                     ans = fourVarSolver(booleanExp, vars);
                     document.getElementById('truthTable').innerHTML = vars[0] + vars[1] + vars[2] + vars[3] + " | F" + "</br>" +
-                                                                      "<s>------|---</s>" + "</br>" +
+                                                                      "<s>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</s>" + "</br>" +
                                                                       "0000 | " + ans[0] + "</br>" +
                                                                       "0001 | " + ans[1] + "</br>" +
                                                                       "0010 | " + ans[2] + "</br>" +
@@ -329,11 +340,12 @@
                                                                       "1100 | " + ans[12] + "</br>" +
                                                                       "1101 | " + ans[13] + "</br>" +
                                                                       "1110 | " + ans[14] + "</br>" +
-                                                                      "1111 | " + ans[15];
+                                                                      "1111 | " + ans[15] + "</br></br>" +
+                                                                      "F(" + vars + ") = Σm(" + printMinterms(ans) + ")";
                 } else if (vars.length === 5) {
                     ans = fiveVarSolver(booleanExp, vars);
                     document.getElementById('truthTable').innerHTML = vars[0] + vars[1] + vars[2] + vars[3] + vars[4] + " | F" + "</br>" +
-                                                                      "<s>-------|---</s>" + "</br>" +
+                                                                      "<s>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</s>" + "</br>" +
                                                                       "00000 | " + ans[0] + "</br>" +
                                                                       "00001 | " + ans[1] + "</br>" +
                                                                       "00010 | " + ans[2] + "</br>" +
@@ -365,7 +377,8 @@
                                                                       "11100 | " + ans[28] + "</br>" +
                                                                       "11101 | " + ans[29] + "</br>" +
                                                                       "11110 | " + ans[30] + "</br>" +
-                                                                      "11111 | " + ans[31];
+                                                                      "11111 | " + ans[31] + "</br></br>" +
+                                                                      "F(" + vars + ") = Σm(" + printMinterms(ans) + ")";
                 }
             }
 
