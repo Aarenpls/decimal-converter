@@ -86,9 +86,9 @@
                                         <input
                                         id="numInput"
                                         type="text"
-                                        maxlength="8"
+                                        maxlength="11"
                                         class="form-control form-control-lg"
-                                        placeholder="eg. 98A9FF2E"
+                                        placeholder="eg. 98A9FF2E or 0x98A9 FF2E"
                                         >
                                     </div>
 
@@ -145,7 +145,9 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script type="text/javascript">
             document.getElementById('numInput').addEventListener('input', function(e) {
-                let num = e.target.value;
+                let num = e.target.value
+                        .replace("0x", "")
+                        .replace(/[\s]/g, "");
 
                 const hexLen = num.length;
                 const binNum = parseInt(num, 16)
@@ -164,7 +166,7 @@
                     }
                 }
 
-                if (/[^0-9A-Fa-f]/.test(num)) {
+                if (/[^0-9A-Fa-fx]/.test(num)) {
                     document.getElementById('binaryOutput').innerHTML = "-";
                     document.getElementById('sign').innerHTML = "-";
                     document.getElementById('exponent').innerHTML = "-";
@@ -186,7 +188,7 @@
                     document.getElementById('exponent').innerHTML = "-";
                     document.getElementById('mantissa').innerHTML = "-";
                     document.getElementById('floatOutput').innerHTML = "-";
-                    document.getElementById('errMsg').innerHTML = "";
+                    document.getElementById('errMsg').innerHTML = "Too many digits!";
                     return false;
                 } else {
                     document.getElementById('binaryOutput').innerHTML = formatBin(binNum);
