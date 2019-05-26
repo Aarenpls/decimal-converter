@@ -6,7 +6,7 @@
 hexadecimal (base-16) notations
 2) Converts floating point numbers to/from IEEE 754 single-precision format
 3) Truth table generator for up to 5 distinct variables
-4) MIPS Architecture encoder
+4) MIPS Architecture instruction encoder
 
 ## How it's built
 
