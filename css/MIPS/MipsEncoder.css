@@ -1,0 +1,68 @@
+body {
+    background:#161616;
+    color:#efefef;
+}
+
+.container-fluid {
+    max-width: 750px;
+    margin-top: 50px;
+}
+
+.breadcrumb {
+    background: #2E2E2E;
+}
+
+#mipsInput {
+    font-family: consolas, monospace;
+    background: #1f1f1f;
+    color: #efefef;
+    border-color: #a5a5a5;
+}
+
+#binOutput, #hexOutput {
+    font-family: consolas, monospace;
+    color: #efefef;
+    text-align: right;
+    font-size: 23px;
+}
+
+#working {
+    font-family: consolas, monospace;
+    color: #efefef;
+    text-align: left;
+    display: inline-block;
+    font-size: 20px;
+}
+
+#errMsg {
+    font-family: consolas, monospace;
+    text-align: center;
+    font-size: 20px;
+    color: #76B6FF;
+}
+
+#helpText {
+    font-size: 17px;
+}
+
+code {
+    font-family: consolas, monospace;
+    font-size: 18px;
+    color: #76B6FF;
+    font-weight: 400;
+}
+
+.nav-link {
+    color: #efefef;
+}
+
+.custom > li > a:hover {
+    color: #76b6ff;
+}
+
+th {
+    font-size: 18px;
+    font-weight: 400;
+    text-align: center;
+    color: #efefef;
+}

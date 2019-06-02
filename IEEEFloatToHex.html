@@ -7,47 +7,8 @@
 
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="css/IEEEConverter/IEEEConverter.css">
 
-        <style media="screen">
-            body {
-                margin-top: 0px;
-                background: #161616;
-                color: #efefef;
-            }
-
-            #binaryOutput, #hexOutput {
-                font-family: consolas, monospace;
-                text-align: right;
-                font-size: 23px;
-            }
-
-            .container-fluid {
-                max-width: 750px;
-                margin-top: 50px;
-            }
-
-            th {
-                font-size: 23px;
-                font-weight: 400;
-                text-align: center;
-                color: #efefef;
-            }
-
-            #sign, #exponent, #mantissa {
-                font-family: consolas, monospace;
-            }
-
-            .breadcrumb {
-                background:#2E2E2E;
-            }
-
-            #numInput {
-                background: #1f1f1f;
-                color: #efefef;
-                border-color: #a5a5a5;
-            }
-
-        </style>
         <title>IEEE 754 Single-Precision Format</title>
     </head>
     <body>
@@ -141,49 +102,7 @@
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-        <script type="text/javascript">
-            document.getElementById('numInput').addEventListener('input', function(e) {
-                let num = e.target.value;
-
-                function floatToHex(f) {
-                    const buf = new ArrayBuffer(4);
-                    (new Float32Array(buf))[0] = f;
-                    const hex = (new Uint32Array(buf))[0];
-                    return hex;
-                }
-
-                function binFormat(IEEE) {
-                    const binNum = IEEE.toString();
-                    const toReturn = binNum.slice(0, 4) + " " + binNum.slice(4, 8)
-                                    + " " + binNum.slice(8, 12) + " " + binNum.slice(12, 16)
-                                    + " " + binNum.slice(16, 20) + " " + binNum.slice(20, 24)
-                                    + " " + binNum.slice(24, 28) + " " + binNum.slice(28, 32);
-                    return toReturn;
-                }
-
-                function hexFormat(hex) {
-                    const str = hex.toString(16).toUpperCase().padStart(8, "0");
-                    const toReturn = "0x" + str.slice(0, 4) + " " + str.slice(4, 8);
-                    return toReturn;
-                }
-
-                if (num * 1 === 0) {
-                    document.getElementById('binaryOutput').innerHTML = "-";
-                    document.getElementById('hexOutput').innerHTML = "-";
-                    document.getElementById('sign').innerHTML = "-";
-                    document.getElementById('exponent').innerHTML = "-";
-                    document.getElementById('mantissa').innerHTML = "-";
-                } else {
-                    const hex = floatToHex(num);
-                    const binNum = hex.toString(2).padStart(32, "0");
-                    document.getElementById('binaryOutput').innerHTML = binFormat(binNum);
-                    document.getElementById('hexOutput').innerHTML = hexFormat(hex);
-                    document.getElementById('sign').innerHTML = binNum.slice(0, 1);
-                    document.getElementById('exponent').innerHTML = binNum.slice(1, 9);
-                    document.getElementById('mantissa').innerHTML = binNum.slice(9, 32);
-                }
-            });
-        </script>
+        <script type="text/javascript" src="js/IEEEConverter/IEEEFloatToHex.js"></script>
 
     </body>
 </html>
